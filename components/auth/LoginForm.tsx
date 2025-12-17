@@ -5,6 +5,13 @@ import * as z from "zod";
 import { Field, FieldError, FieldGroup, FieldLabel } from "../ui/field";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
+import { useLogin } from "@/lib/queries/auth.queries";
+import { successToast } from "@/lib/handleToast";
+import { useRouter } from "next/navigation";
+import { routes } from "@/lib/routes";
+import { setCookie } from "@/lib/cookieHandler";
+import { authConstants } from "@/lib/constants";
+import { useAuthStore } from "@/store/authStore";
 
 const formSchema = z.object({
   email: z
@@ -15,6 +22,9 @@ const formSchema = z.object({
 });
 
 export function LoginForm() {
+  const router = useRouter();
+  const { setUser } = useAuthStore();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -23,9 +33,19 @@ export function LoginForm() {
     },
   });
 
+  const { mutate } = useLogin();
+
   function onSubmit(data: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    console.log(data);
+    mutate(data, {
+      onSuccess: (data) => {
+        successToast(data);
+        setCookie(authConstants.accessToken, data.accessToken);
+        setCookie(authConstants.refreshToken, data.refreshToken);
+        setCookie(authConstants.deviceId, data.deviceId);
+        setUser(data?.user);
+        router.push(routes.public.home);
+      },
+    });
   }
 
   return (

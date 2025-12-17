@@ -19,5 +19,9 @@ export const getCookie = (key: string) => {
 };
 
 export const clearCookies = () => {
-  removeCookie([authConstants.accessToken, authConstants.refreshToken]);
+  removeCookie([
+    authConstants.accessToken,
+    authConstants.refreshToken,
+    authConstants.deviceId,
+  ]);
 };

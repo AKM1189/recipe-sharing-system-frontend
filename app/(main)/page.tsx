@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { dummyRecipes } from "@/data";
 import { constants } from "@/lib/constants";
+import { useMe } from "@/lib/queries/auth.queries";
 import { Search, Utensils } from "lucide-react";
 
 export default function Home() {

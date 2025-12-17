@@ -14,6 +14,21 @@ import {
 } from "@/components/ui/navigation-menu";
 import { useIsMobile } from "@/app/hooks/use-mobile";
 import { routes } from "@/lib/routes";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { useAuthStore } from "@/store/authStore";
+import { Popover, PopoverTrigger } from "../ui/popover";
+import { PopoverContent } from "@radix-ui/react-popover";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
+import { useLogout } from "@/lib/queries/auth.queries";
+import { clearCookies, getCookie } from "@/lib/cookieHandler";
+import { authConstants } from "@/lib/constants";
 
 export function Navbar() {
   const isMobile = useIsMobile();
@@ -62,13 +77,7 @@ export function Navbar() {
         </NavigationMenuList>
       </NavigationMenu>
       <div>
-        <a
-          href={routes.auth.login}
-          className="flex items-center gap-2 text-base font-medium"
-        >
-          <LogIn color="#000000" className="w-5 h-5" />
-          Login
-        </a>
+        <Profile />
       </div>
     </div>
   );
@@ -91,5 +100,54 @@ function ListItem({
         </Link>
       </NavigationMenuLink>
     </li>
+  );
+}
+
+function Profile() {
+  const { user } = useAuthStore();
+  const { mutate } = useLogout();
+
+  const handleLogout = () => {
+    const deviceId = getCookie(authConstants.deviceId);
+    console.log("deviceId", deviceId);
+    if (deviceId) {
+      mutate({ deviceId });
+    }
+  };
+
+  if (user)
+    return (
+      <DropdownMenu>
+        <DropdownMenuTrigger className="flex items-center gap-3">
+          <Avatar>
+            <AvatarImage src="https://github.com/shadcn.png" />
+            <AvatarFallback>CN</AvatarFallback>
+          </Avatar>
+          <span>{user.name}</span>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="w-50" align="end">
+          <DropdownMenuLabel>My Account</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem>Profile</DropdownMenuItem>
+          <DropdownMenuItem>My Recipes</DropdownMenuItem>
+          <DropdownMenuItem>Saved</DropdownMenuItem>
+          <DropdownMenuItem
+            className="text-destructive hover:text-destructive!"
+            onClick={handleLogout}
+          >
+            Logout
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    );
+
+  return (
+    <a
+      href={routes.auth.login}
+      className="flex items-center gap-2 text-base font-medium"
+    >
+      <LogIn color="#000000" className="w-5 h-5" />
+      Login
+    </a>
   );
 }

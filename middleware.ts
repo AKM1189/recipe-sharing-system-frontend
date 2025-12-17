@@ -14,9 +14,9 @@ export function middleware(req: NextRequest) {
     pathname.startsWith(route),
   );
 
-  // if (isPrivateRoute && !token) {
-  //   return NextResponse.redirect(new URL(routes.auth.login, req.url));
-  // }
+  if (isPrivateRoute && !token) {
+    return NextResponse.redirect(new URL(routes.auth.login, req.url));
+  }
 
   return NextResponse.next();
 }

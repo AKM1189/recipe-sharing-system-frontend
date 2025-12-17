@@ -5,6 +5,7 @@ export const constants = {
 export const authConstants = {
   accessToken: "accessToken",
   refreshToken: "refreshToken",
+  deviceId: "deviceId",
 };
 
 export enum RecipeDifficulty {

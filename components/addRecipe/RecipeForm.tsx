@@ -17,6 +17,7 @@ import ImagePreview from "../common/ImagePreview";
 import CookingTimeSelector from "./CookingTimeSelector";
 import { useRouter } from "next/navigation";
 import { routes } from "@/lib/routes";
+import { useAuthStore } from "@/store/authStore";
 
 const data = Object.values(RecipeDifficulty).map((value) => ({
   label: value[0] + value.slice(1).toLowerCase(),

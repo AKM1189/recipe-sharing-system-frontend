@@ -5,7 +5,7 @@ import { authConstants } from "../constants";
 import { navigateToLogin } from "../utils";
 
 export const api: AxiosInstance = axios.create({
-  baseURL: process.env.BASE_URL,
+  baseURL: process.env.NEXT_PUBLIC_BASE_URL,
   headers: {
     "Content-Type": "application/json",
   },
@@ -52,7 +52,7 @@ api.interceptors.response.use(
     const originalRequest = error.config;
 
     // ① Access token expired (408)
-    if (error?.response?.status === 408 && !originalRequest._retry) {
+    if (error?.response?.status === 401 && !originalRequest._retry) {
       const refreshToken = getCookie(authConstants.refreshToken);
 
       if (!refreshToken) {
@@ -72,12 +72,12 @@ api.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        const response = await api.post(
-          endpoints.auth.refresh + "?refreshToken=" + refreshToken,
-        );
+        const response = await api.post(endpoints.auth.refresh, {
+          refreshToken,
+        });
 
         const { accessToken, refreshToken: newRefreshToken } =
-          response.data?.data?.tokens || {};
+          response.data || {};
 
         setCookie(authConstants.accessToken, accessToken);
         setCookie(authConstants.refreshToken, newRefreshToken);
@@ -93,6 +93,7 @@ api.interceptors.response.use(
         // If refresh itself failed → logout all
         processQueue(err, null);
         isRefreshing = false;
+        console.log("refresh error");
 
         clearCookies();
 
@@ -101,9 +102,12 @@ api.interceptors.response.use(
         return Promise.reject(err);
       }
     }
+    console.log("refresh error");
 
     // ② Refresh token expired → logout
     if (error?.response?.status === 401) {
+      console.log("refresh error");
+
       clearCookies();
       navigateToLogin();
     }
