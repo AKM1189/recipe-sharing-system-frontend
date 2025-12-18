@@ -57,7 +57,7 @@ api.interceptors.response.use(
 
       if (!refreshToken) {
         clearCookies();
-        navigateToLogin();
+        // navigateToLogin();
         return Promise.reject(error);
       }
 
@@ -97,7 +97,7 @@ api.interceptors.response.use(
 
         clearCookies();
 
-        navigateToLogin();
+        // navigateToLogin();
 
         return Promise.reject(err);
       }
@@ -109,7 +109,7 @@ api.interceptors.response.use(
       console.log("refresh error");
 
       clearCookies();
-      navigateToLogin();
+      // navigateToLogin();
     }
 
     return Promise.reject(error);
