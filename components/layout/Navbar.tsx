@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { LogIn } from "lucide-react";
+import { LogIn, Menu } from "lucide-react";
 
 import {
   NavigationMenu,
@@ -29,9 +29,11 @@ import {
 import { useLogout } from "@/lib/queries/auth.queries";
 import { clearCookies, getCookie } from "@/lib/cookieHandler";
 import { authConstants } from "@/lib/constants";
+import { NavbarDialog } from "./NavbarDialog";
 
 export function Navbar() {
   const isMobile = useIsMobile();
+  const [IsNavbarOpen, setIsNavbarOpen] = React.useState(false);
 
   return (
     <div className="flex justify-between items-center h-20">
@@ -40,7 +42,7 @@ export function Navbar() {
         className="flex justify-between items-center h-full"
       >
         <h2 className="text-2xl text-primary font-extrabold">Recipe</h2>
-        <NavigationMenuList className="flex-wrap ms-30 gap-8">
+        <NavigationMenuList className="flex-wrap ms-30 gap-8 max-lg:hidden ">
           <NavigationMenuItem>
             <NavigationMenuLink href={routes.public.home}>
               Home
@@ -76,7 +78,10 @@ export function Navbar() {
           </NavigationMenuItem>
         </NavigationMenuList>
       </NavigationMenu>
-      <div>
+      <div className="flex gap-8 items-center">
+        <div className="lg:hidden">
+          <NavbarDialog />
+        </div>
         <Profile />
       </div>
     </div>

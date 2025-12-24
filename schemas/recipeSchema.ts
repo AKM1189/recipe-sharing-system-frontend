@@ -16,7 +16,7 @@ export const stepSchema = z.object({
 export const recipeSchema = z.object({
   title: z.string().nonempty({ message: "Title is required" }),
   description: z.string().nonempty({ message: "Description is required" }),
-  image: z.instanceof(File).optional(),
+  recipeImage: z.instanceof(File).optional(),
   cookingTime: z
     .number()
     .nonnegative({ message: "Cooking time is not valid" })

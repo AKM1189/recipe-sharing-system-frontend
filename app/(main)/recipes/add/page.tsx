@@ -2,7 +2,7 @@ import { RecipeForm } from "@/components/addRecipe/RecipeForm";
 
 export default function CreateRecipe() {
   return (
-    <div className="mx-20 mt-20">
+    <div>
       <div className="text-center max-w-[800px] mx-auto mb-10">
         <h1 className="text-4xl font-bold"> Add Recipe</h1>
         <p className="leading-6 mt-5 text-sm">
@@ -10,7 +10,7 @@ export default function CreateRecipe() {
           delicious dishes and inspire others with new culinary creations.
         </p>
       </div>
-      <div className="w-[800px] mx-auto">
+      <div className="max-w-[800px] mx-auto">
         <RecipeForm />
       </div>
     </div>

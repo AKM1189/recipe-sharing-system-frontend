@@ -44,40 +44,42 @@ const CookingTimeSelector = ({
         control={form.control}
         render={({ field, fieldState }) => (
           <Field data-invalid={fieldState.invalid}>
-            <div className="flex items-center gap-10 mt-4">
-              <FieldLabel>Cooking Time</FieldLabel>
-              <div className="flex gap-2 items-center">
-                <DurationSelector
-                  open={cookingTime.hourOpen}
-                  onOpenChange={() =>
-                    updateCookingTime("hourOpen", !cookingTime.hourOpen)
-                  }
-                  value={cookingTime.hour}
-                  data={hours}
-                  onValueChange={(type, hour) => {
-                    updateCookingTime(type, hour);
-                    field.onChange(hour * 60 + cookingTime.minute);
-                  }}
-                  type="hour"
-                />
-                <label className=" text-sm font-medium">Hour</label>
-              </div>
+            <div className="sm:flex sm:items-center gap-10 mt-4">
+              <FieldLabel className="max-sm:mb-3">Cooking Time</FieldLabel>
+              <div className="flex gap-5">
+                <div className="flex gap-2 items-center">
+                  <DurationSelector
+                    open={cookingTime.hourOpen}
+                    onOpenChange={() =>
+                      updateCookingTime("hourOpen", !cookingTime.hourOpen)
+                    }
+                    value={cookingTime.hour}
+                    data={hours}
+                    onValueChange={(type, hour) => {
+                      updateCookingTime(type, hour);
+                      field.onChange(hour * 60 + cookingTime.minute);
+                    }}
+                    type="hour"
+                  />
+                  <label className=" text-sm font-medium">Hour</label>
+                </div>
 
-              <div className="flex gap-2 items-center">
-                <DurationSelector
-                  open={cookingTime.minuteOpen}
-                  onOpenChange={() =>
-                    updateCookingTime("minuteOpen", !cookingTime.minuteOpen)
-                  }
-                  value={cookingTime.minute}
-                  data={minutes}
-                  onValueChange={(type, minute) => {
-                    updateCookingTime(type, minute);
-                    field.onChange(cookingTime.hour * 60 + minute);
-                  }}
-                  type="minute"
-                />
-                <label className="mb-1 text-sm font-medium">Minute</label>
+                <div className="flex gap-2 items-center">
+                  <DurationSelector
+                    open={cookingTime.minuteOpen}
+                    onOpenChange={() =>
+                      updateCookingTime("minuteOpen", !cookingTime.minuteOpen)
+                    }
+                    value={cookingTime.minute}
+                    data={minutes}
+                    onValueChange={(type, minute) => {
+                      updateCookingTime(type, minute);
+                      field.onChange(cookingTime.hour * 60 + minute);
+                    }}
+                    type="minute"
+                  />
+                  <label className="mb-1 text-sm font-medium">Minute</label>
+                </div>
               </div>
             </div>
             {fieldState.invalid && <FieldError errors={[fieldState.error]} />}

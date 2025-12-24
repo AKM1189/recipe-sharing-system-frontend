@@ -29,7 +29,7 @@ export default function PopularTags() {
   ];
   return (
     <div className="mt-28">
-      <div className="min-h-[100px] py-20 bg-secondary flex flex-col justify-center items-center">
+      <div className="min-h-[100px] py-20 px-5 bg-secondary flex flex-col justify-center items-center">
         <div className="text-center max-w-[1000px] mx-auto">
           <h1 className="text-5xl font-bold">Explore Popular Tags</h1>
           <p className="leading-6 mt-3 text-muted-foreground">

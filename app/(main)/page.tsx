@@ -1,12 +1,16 @@
-import RecipeCard from "@/components/recipes/RecipeCard";
+import RecipesGrid from "@/components/recipes/RecipeGrid";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { dummyRecipes } from "@/data";
+import { serverFetch } from "@/lib/api/server-api";
 import { constants } from "@/lib/constants";
-import { useMe } from "@/lib/queries/auth.queries";
+import { endpoints } from "@/lib/endpoints";
 import { Search, Utensils } from "lucide-react";
 
-export default function Home() {
+export default async function Home() {
+  const recipes = await serverFetch(endpoints.recipe);
+
+  console.log("recipes", recipes);
   const categories = [
     "APPETIZERS",
     "DRINKS",
@@ -67,7 +71,9 @@ export default function Home() {
           Explore our latest recipes, from quick snacks to hearty meals and
           indulgent desserts.
         </p>
-        <RecipeCard recipes={dummyRecipes} />
+        <div className="min-w-0 w-full">
+          {Array.isArray(recipes) && <RecipesGrid recipes={recipes} />}
+        </div>
       </div>
     </div>
   );

@@ -18,6 +18,7 @@ import CookingTimeSelector from "./CookingTimeSelector";
 import { useRouter } from "next/navigation";
 import { routes } from "@/lib/routes";
 import { useAuthStore } from "@/store/authStore";
+import { useAddRecipe } from "@/lib/queries/recipe.queries";
 
 const data = Object.values(RecipeDifficulty).map((value) => ({
   label: value[0] + value.slice(1).toLowerCase(),
@@ -35,12 +36,14 @@ export function RecipeForm() {
     "Appetizer",
   ]);
 
+  const { mutate } = useAddRecipe();
+
   const form = useForm<z.infer<typeof recipeSchema>>({
     resolver: zodResolver(recipeSchema),
     defaultValues: {
       title: "",
       description: "",
-      image: undefined,
+      recipeImage: undefined,
       cookingTime: 0,
       serving: 0,
       difficulty: "",
@@ -63,6 +66,14 @@ export function RecipeForm() {
   function onSubmit(data: z.infer<typeof recipeSchema>) {
     // Do something with the form values.
     console.log(data);
+    mutate(
+      { ...data, status: "PUBLISHED" },
+      {
+        onSuccess: () => {
+          router.push(routes.public.home);
+        },
+      },
+    );
   }
 
   const handleAddCategory = (newCategory: string) => {
@@ -123,7 +134,7 @@ export function RecipeForm() {
 
         <FieldGroup>
           <Controller
-            name="image"
+            name="recipeImage"
             control={form.control}
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>

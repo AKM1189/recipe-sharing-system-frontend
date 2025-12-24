@@ -7,6 +7,7 @@ export const routes = {
   public: {
     home: "/",
     recipes: "/recipes",
+    categories: "/categories",
   },
   private: {
     addRecipe: "/recipes/add",

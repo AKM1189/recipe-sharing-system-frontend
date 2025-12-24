@@ -12,7 +12,7 @@ export default function Footer() {
   ];
   return (
     <div className="mb-10">
-      <div className="flex justify-between items-center border-b border-border mx-20 h-28">
+      <div className="flex max-lg:flex-col justify-center lg:justify-between items-center gap-5 border-b border-border lg:mx-20 mx-5 h-28">
         <div className="flex gap-3">
           {medias.map((item, index) => (
             <div
@@ -31,7 +31,7 @@ export default function Footer() {
         </div>
       </div>
       <div className="mt-8 text-center">
-        <p className="text-muted-foreground">
+        <p className="text-muted-foreground mx-3">
           Platea offers a world of delicious recipes, cooking inspiration, and
           culinary tips. Explore new flavors, master techniques, and bring your
           passion for cooking to life.

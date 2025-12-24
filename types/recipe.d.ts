@@ -11,18 +11,20 @@ export interface Recipe {
   updatedAt?: string;
   user: User; // relation
   comments?: Comment[];
+  status: string;
 }
 
 export interface RecipeBody {
   title: string;
   description: string;
-  imageUrl: string;
+  recipeImage?: File | undefined;
   cookingTime: number;
   serving: number;
   difficulty: RecipeDifficulty;
-  categories: number[];
+  categories: string[];
   steps: RecipeSteps[];
   ingredients: RecipeIngredients[];
+  status: string;
 }
 
 export interface CategoriesPayload {
@@ -33,11 +35,11 @@ export interface CategoriesPayload {
 export interface RecipeSteps {
   stepNumber: number;
   instruction: string;
-  image?: string;
+  image?: string | File;
 }
 
 export interface RecipeIngredients {
   name: string;
-  quantity: string;
+  quantity: number;
   unit: string;
 }

@@ -6,4 +6,5 @@ export const endpoints = {
     me: "/auth/me",
     logout: "/auth/logout",
   },
+  recipe: "/recipes",
 };

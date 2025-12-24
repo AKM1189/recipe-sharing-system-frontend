@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getMe, login, logout, signup } from "../api/auth.api";
 import { errorToast, successToast } from "../handleToast";
-import { clearCookies } from "../cookieHandler";
+import { clearCookies, getCookie } from "../cookieHandler";
 
 export const useLogin = () => {
   return useMutation({
@@ -26,8 +26,9 @@ export const useMe = () => {
   return useQuery({
     queryKey: ["me"],
     queryFn: getMe,
-    retry: false,
     staleTime: 5 * 60 * 1000,
+    refetchOnWindowFocus: false,
+    retry: false,
   });
 };
 

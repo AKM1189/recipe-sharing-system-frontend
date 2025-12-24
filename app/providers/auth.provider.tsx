@@ -1,5 +1,6 @@
 "use client";
 
+import { Spinner } from "@/components/ui/spinner";
 import { useMe } from "@/lib/queries/auth.queries";
 import { useAuthStore } from "@/store/authStore";
 import { useEffect } from "react";
@@ -13,9 +14,17 @@ export default function AuthProvider({
   const { setUser } = useAuthStore();
 
   useEffect(() => {
-    setUser(user);
-  }, [user]);
+    if (!isLoading) {
+      setUser(user ?? null);
+    }
+  }, [isLoading, user]);
 
-  if (isLoading) return null;
+  console.log("isLoading", isLoading, user);
+  if (isLoading)
+    return (
+      <div className="w-svw h-svh flex justify-center items-center">
+        <Spinner className="size-12" />
+      </div>
+    );
   return children;
 }

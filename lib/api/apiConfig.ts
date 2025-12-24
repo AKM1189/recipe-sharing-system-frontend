@@ -12,6 +12,14 @@ export const api: AxiosInstance = axios.create({
   withCredentials: true,
 });
 
+export const refreshApi: AxiosInstance = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_BASE_URL,
+  headers: {
+    "Content-Type": "application/json",
+  },
+  withCredentials: true,
+});
+
 api.interceptors.request.use(
   (config) => {
     const accessToken = getCookie(authConstants.accessToken);
@@ -51,17 +59,13 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    // ① Access token expired (408)
     if (error?.response?.status === 401 && !originalRequest._retry) {
       const refreshToken = getCookie(authConstants.refreshToken);
 
       if (!refreshToken) {
-        clearCookies();
-        // navigateToLogin();
         return Promise.reject(error);
       }
 
-      // FLAG: prevent multiple refresh calls
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject, originalRequest });
@@ -72,44 +76,27 @@ api.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        const response = await api.post(endpoints.auth.refresh, {
+        const response = await refreshApi.post(endpoints.auth.refresh, {
           refreshToken,
         });
 
-        const { accessToken, refreshToken: newRefreshToken } =
-          response.data || {};
+        const { accessToken, refreshToken: newRefreshToken } = response.data;
 
         setCookie(authConstants.accessToken, accessToken);
         setCookie(authConstants.refreshToken, newRefreshToken);
 
-        // Process queue AFTER refresh is successful
         processQueue(null, accessToken);
         isRefreshing = false;
 
-        // Retry the original request
         originalRequest.headers.Authorization = `Bearer ${accessToken}`;
+
         return api(originalRequest);
       } catch (err) {
-        // If refresh itself failed → logout all
         processQueue(err, null);
         isRefreshing = false;
-        console.log("refresh error");
-
         clearCookies();
-
-        // navigateToLogin();
-
         return Promise.reject(err);
       }
-    }
-    console.log("refresh error");
-
-    // ② Refresh token expired → logout
-    if (error?.response?.status === 401) {
-      console.log("refresh error");
-
-      clearCookies();
-      // navigateToLogin();
     }
 
     return Promise.reject(error);
