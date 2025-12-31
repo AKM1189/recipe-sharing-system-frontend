@@ -11,5 +11,6 @@ export const routes = {
   },
   private: {
     addRecipe: "/recipes/add",
+    updateRecipe: "/recipes/update",
   },
 };

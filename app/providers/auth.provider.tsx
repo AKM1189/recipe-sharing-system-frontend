@@ -2,7 +2,7 @@
 
 import { Spinner } from "@/components/ui/spinner";
 import { useMe } from "@/lib/queries/auth.queries";
-import { useAuthStore } from "@/store/authStore";
+import { useAuthStore } from "@/store/auth.store";
 import { useEffect } from "react";
 
 export default function AuthProvider({

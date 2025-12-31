@@ -1,20 +1,26 @@
+import { RecipeCategory } from "./category";
+import { User } from "./user";
+
 export interface Recipe {
-  id: string;
+  id: number;
   title: string;
   description: string;
   imageUrl: string;
   cookingTime: number;
   serving: number;
   difficulty: RecipeDifficulty;
-  category: string;
+  categories: RecipeCategory[];
   createdAt: string;
   updatedAt?: string;
-  user: User; // relation
+  userId: string; // relation
   comments?: Comment[];
   status: string;
+  ingredients: RecipeIngredients[];
+  steps: RecipeSteps[];
+  user: User;
 }
 
-export interface RecipeBody {
+export interface CreateRecipeBody {
   title: string;
   description: string;
   recipeImage?: File | undefined;
@@ -27,19 +33,27 @@ export interface RecipeBody {
   status: string;
 }
 
+export interface UpdateRecipeBody extends CreateRecipeBody {
+  id: number;
+  deletedSteps: number[];
+}
+
 export interface CategoriesPayload {
   name: string;
   slug: string;
 }
 
 export interface RecipeSteps {
+  id?: number;
   stepNumber: number;
   instruction: string;
-  image?: string | File;
+  image?: File | undefined;
+  imageUrl?: string | undefined;
 }
 
 export interface RecipeIngredients {
+  id?: number;
   name: string;
-  quantity: number;
+  quantity: string;
   unit: string;
 }

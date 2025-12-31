@@ -7,6 +7,7 @@ import { Textarea } from "../ui/textarea";
 import ImagePreview from "../common/ImagePreview";
 import { handlePreviewImage } from "@/lib/utils";
 import { useEffect } from "react";
+import { useRecipeStore } from "@/store/recipe.store";
 
 export default function StepForm({
   form,
@@ -15,19 +16,27 @@ export default function StepForm({
   form: UseFormReturn<z.infer<typeof recipeSchema>>;
   index: number;
 }) {
-  useEffect(() => {
-    return () => {
-      const url = form.getValues(`steps.${index}.previewUrl`);
-      if (url) URL.revokeObjectURL(url);
-    };
-  }, []);
+  const { deletedSteps } = useRecipeStore();
 
   const preview = form.watch(`steps.${index}.previewUrl`);
+
+  const imageUrl = form.getValues(`steps.${index}.imageUrl`);
 
   const stepInstructionState = form.getFieldState(
     `steps.${index}.instruction`,
     form.formState,
   );
+
+  useEffect(() => {
+    const stepId = form.getValues(`steps.${index}.stepId`);
+    if (stepId && deletedSteps.includes(stepId)) {
+      form.setValue(`steps.${index}.stepId`, undefined);
+    }
+    return () => {
+      const url = form.getValues(`steps.${index}.previewUrl`);
+      if (url) URL.revokeObjectURL(url);
+    };
+  }, []);
 
   return (
     <div>
@@ -39,6 +48,13 @@ export default function StepForm({
           autoComplete="off"
         />
       </FieldGroup>
+
+      <Input
+        {...form.register(`steps.${index}.stepId`)}
+        hidden
+        autoComplete="off"
+      />
+
       <FieldGroup className="mt-3 gap-3">
         <FieldLabel htmlFor="instruction">Instruction</FieldLabel>
         <Textarea
@@ -74,6 +90,14 @@ export default function StepForm({
         />
       </FieldGroup>
       {preview && <ImagePreview src={preview} alt="recipe-image" />}
+      {!preview && imageUrl && (
+        <img
+          width={200}
+          height={200}
+          src={process.env.NEXT_PUBLIC_IMAGE_URL + imageUrl}
+          alt="step image"
+        />
+      )}
     </div>
   );
 }

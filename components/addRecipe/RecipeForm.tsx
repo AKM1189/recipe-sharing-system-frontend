@@ -6,8 +6,8 @@ import z from "zod";
 import { Field, FieldError, FieldGroup, FieldLabel } from "../ui/field";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
-import { useState } from "react";
-import { handlePreviewImage } from "@/lib/utils";
+import { useEffect, useState } from "react";
+import { getImageUrl, handlePreviewImage } from "@/lib/utils";
 import { SelectInput } from "../common/SelectInput";
 import { RecipeDifficulty } from "@/lib/constants";
 import { MultiSelectCreatable } from "../common/ComobBoxCreatable";
@@ -17,40 +17,69 @@ import ImagePreview from "../common/ImagePreview";
 import CookingTimeSelector from "./CookingTimeSelector";
 import { useRouter } from "next/navigation";
 import { routes } from "@/lib/routes";
-import { useAuthStore } from "@/store/authStore";
-import { useAddRecipe } from "@/lib/queries/recipe.queries";
+import { useAuthStore } from "@/store/auth.store";
+import { useAddRecipe, useUpdateRecipe } from "@/lib/queries/recipe.queries";
+import { Category, Recipe } from "@/types";
+import { useRecipeStore } from "@/store/recipe.store";
+import { useGetCategories } from "@/lib/queries/category.queries";
+
+const createDefaultValues = {
+  title: "",
+  description: "",
+  recipeImage: undefined,
+  cookingTime: 0,
+  serving: 0,
+  difficulty: "",
+  categories: [],
+  imageUrl: undefined,
+  ingredients: [{ id: 0, name: "", quantity: "0", unit: "" }],
+  steps: [{ stepId: 0, stepNumber: 1, instruction: "", image: undefined }],
+};
 
 const data = Object.values(RecipeDifficulty).map((value) => ({
   label: value[0] + value.slice(1).toLowerCase(),
   value,
 }));
 
-export function RecipeForm() {
+export function RecipeForm({ recipe }: { recipe?: Recipe }) {
   const router = useRouter();
+  const isUpdate = recipe?.id ? true : false;
 
   const [recipeImageUrl, setRecipeImageUrl] = useState<string | undefined>();
+  const { deletedSteps, deletedIngredients } = useRecipeStore();
 
-  const [categories, setCategories] = useState([
-    "Dessert",
-    "Main Course",
-    "Appetizer",
-  ]);
+  const { data: categoryData } = useGetCategories();
+
+  const [categories, setCategories] = useState<string[]>([]);
 
   const { mutate } = useAddRecipe();
+  const { mutate: updateRecipe } = useUpdateRecipe();
+
+  const defaultValues =
+    recipe && isUpdate
+      ? {
+          title: recipe.title,
+          description: recipe.description,
+          recipeImage: undefined,
+          cookingTime: recipe.cookingTime,
+          serving: recipe.serving,
+          difficulty: recipe.difficulty,
+          categories: recipe.categories.map(
+            (category) => category.category.name,
+          ),
+          ingredients: recipe.ingredients,
+          steps: recipe.steps.map((step) => ({
+            stepId: step.id,
+            stepNumber: step.stepNumber,
+            instruction: step.instruction,
+            imageUrl: step.imageUrl || undefined,
+          })),
+        }
+      : createDefaultValues;
 
   const form = useForm<z.infer<typeof recipeSchema>>({
     resolver: zodResolver(recipeSchema),
-    defaultValues: {
-      title: "",
-      description: "",
-      recipeImage: undefined,
-      cookingTime: 0,
-      serving: 0,
-      difficulty: "",
-      categories: [],
-      ingredients: [{ name: "", quantity: 0, unit: "" }],
-      steps: [{ stepNumber: 1, instruction: "", image: undefined }],
-    },
+    defaultValues,
   });
 
   const ingredientFieldArray = useFieldArray({
@@ -63,23 +92,55 @@ export function RecipeForm() {
     name: "steps",
   });
 
+  useEffect(() => {
+    if (categoryData?.success && categoryData?.data.length > 0) {
+      setCategories(
+        categoryData?.data?.map((category: Category) => category?.name),
+      );
+    }
+  }, [categoryData]);
+
   function onSubmit(data: z.infer<typeof recipeSchema>) {
     // Do something with the form values.
-    console.log(data);
-    mutate(
-      { ...data, status: "PUBLISHED" },
-      {
-        onSuccess: () => {
-          router.push(routes.public.home);
+    console.log("submitting", data);
+    if (!isUpdate) {
+      mutate(
+        { ...data, status: "PUBLISHED" },
+        {
+          onSuccess: () => {
+            router.push(routes.public.home);
+          },
         },
-      },
-    );
+      );
+    } else {
+      if (!recipe?.id) return;
+      console.log("update", deletedSteps);
+
+      const body = {
+        ...data,
+        id: recipe.id,
+        imageUrl: recipe?.imageUrl,
+        deletedIngredients: deletedIngredients ?? [],
+        deletedSteps: deletedSteps ?? [],
+        status: "PUBLISHED",
+      };
+      updateRecipe(
+        { ...body },
+        {
+          onSuccess: () => {
+            router.push(routes.public.home);
+          },
+        },
+      );
+    }
   }
 
   const handleAddCategory = (newCategory: string) => {
     setCategories((prev) => [...prev, newCategory]);
   };
-
+  const handleRemoveCategory = (category: string) => {
+    setCategories(categories.filter((c) => c !== category));
+  };
   return (
     <div>
       <form
@@ -163,7 +224,15 @@ export function RecipeForm() {
 
         <ImagePreview src={recipeImageUrl} alt="recipe-image" />
 
-        <CookingTimeSelector form={form} />
+        {!recipeImageUrl && recipe?.imageUrl && (
+          <img
+            width={200}
+            height={200}
+            src={getImageUrl(recipe.imageUrl)}
+            alt={recipe.title}
+          />
+        )}
+        <CookingTimeSelector form={form} value={recipe?.cookingTime} />
 
         <FieldGroup className="mt-3">
           <Controller
@@ -221,6 +290,7 @@ export function RecipeForm() {
                 value={field.value}
                 onValueChange={field.onChange}
                 onAddCategory={handleAddCategory}
+                onRemoveCategory={handleRemoveCategory}
                 placeholder="Select or add categories"
               />
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
@@ -244,6 +314,7 @@ export function RecipeForm() {
           </button>
           <button
             type="submit"
+            onClick={() => console.log(form.formState.errors)}
             className="w-[150px] mt-4 px-4 py-2 bg-primary text-white rounded"
           >
             Submit

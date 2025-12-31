@@ -1,5 +1,11 @@
 export interface Category {
-  id: string;
+  id: number;
   name: string;
-  icon?: string;
+  slug: string;
+}
+
+export interface RecipeCategory {
+  recipeId: number;
+  categoryId: number;
+  category: Category;
 }

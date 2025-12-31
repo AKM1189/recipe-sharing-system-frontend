@@ -7,4 +7,5 @@ export const endpoints = {
     logout: "/auth/logout",
   },
   recipe: "/recipes",
+  category: "/categories",
 };

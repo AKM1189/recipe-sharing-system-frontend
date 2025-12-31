@@ -8,7 +8,7 @@ import { endpoints } from "@/lib/endpoints";
 import { Search, Utensils } from "lucide-react";
 
 export default async function Home() {
-  const recipes = await serverFetch(endpoints.recipe);
+  const { data: recipes } = await serverFetch(endpoints.recipe);
 
   console.log("recipes", recipes);
   const categories = [

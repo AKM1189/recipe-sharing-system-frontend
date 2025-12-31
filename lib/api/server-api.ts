@@ -12,6 +12,7 @@ export async function serverFetch(url: string, options: RequestInit = {}) {
     },
     cache: "no-store",
   });
+  console.log("response", response);
 
   if (!response.ok) {
     // throw new Error(`Failed to fetch data: ${response.status}`);

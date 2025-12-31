@@ -11,7 +11,7 @@ import { useRouter } from "next/navigation";
 import { routes } from "@/lib/routes";
 import { setCookie } from "@/lib/cookieHandler";
 import { authConstants } from "@/lib/constants";
-import { useAuthStore } from "@/store/authStore";
+import { useAuthStore } from "@/store/auth.store";
 
 const formSchema = z.object({
   email: z

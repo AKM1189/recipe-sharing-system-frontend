@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Plus } from "lucide-react";
+import { Plus, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Button } from "../ui/button";
@@ -11,7 +11,8 @@ interface MultiSelectCreatableProps {
   onValueChange: (values: string[]) => void;
   placeholder?: string;
   data: string[];
-  onAddCategory?: (newCategory: string) => void;
+  onAddCategory: (newCategory: string) => void;
+  onRemoveCategory: (category: string) => void;
 }
 
 export const MultiSelectCreatable: React.FC<MultiSelectCreatableProps> = ({
@@ -20,6 +21,7 @@ export const MultiSelectCreatable: React.FC<MultiSelectCreatableProps> = ({
   placeholder,
   data,
   onAddCategory,
+  onRemoveCategory,
 }) => {
   const [inputValue, setInputValue] = React.useState("");
 
@@ -76,11 +78,21 @@ export const MultiSelectCreatable: React.FC<MultiSelectCreatableProps> = ({
               <Button
                 variant={"outline"}
                 key={item}
-                className="w-full justify-start !items-left border-none"
+                className="w-full justify-between !items-left border-none"
                 value={item}
                 onClick={() => handleSelect(item)}
               >
                 {item}
+
+                <span
+                  className="cursor-pointer hover:bg-gray-200 p-1 rounded-xs"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onRemoveCategory(item);
+                  }}
+                >
+                  <X color="gray" />
+                </span>
               </Button>
             ))}
           </div>
@@ -100,11 +112,14 @@ export const MultiSelectCreatable: React.FC<MultiSelectCreatableProps> = ({
               type="button"
               className="p-1 rounded hover:bg-gray-200"
               onClick={handleAdd}
-              disabled={data.some((item) => item === inputValue)}
+              disabled={
+                data.some((item) => item === inputValue) || inputValue === ""
+              }
             >
               <Plus
                 className={cn(
                   "w-4 h-4",
+                  inputValue === "" && "text-disabled-foreground",
                   data.some((item) => item === inputValue) &&
                     "text-disabled-foreground",
                 )}

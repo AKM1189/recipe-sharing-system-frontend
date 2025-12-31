@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/accordion";
 import StepForm from "./StepForm";
 import { Field, FieldError } from "../ui/field";
+import { useRecipeStore } from "@/store/recipe.store";
 
 type FieldArrayType = UseFieldArrayReturn<z.infer<typeof recipeSchema>>;
 
@@ -91,6 +92,7 @@ const IngredientStepTabs = ({
 export default IngredientStepTabs;
 
 const IngredientsTab = ({ fields, append, remove, form }: TabType) => {
+  const { addDeletedIngredient } = useRecipeStore();
   return (
     <div className="flex flex-col gap-5">
       <Accordion type="multiple" className="flex flex-col gap-3">
@@ -103,12 +105,17 @@ const IngredientsTab = ({ fields, append, remove, form }: TabType) => {
                 </AccordionTrigger>
                 <AccordionContent>
                   <div className="px-5 border-t border-input">
-                    <IngredientForm form={form} index={index} />
+                    <IngredientForm form={form} index={index} key={item.id} />
                     <div className="text-end mt-5">
                       <span
                         className="text-primary font-medium"
                         onClick={(e) => {
                           e.preventDefault();
+
+                          const id = form.getValues(`ingredients.${index}.id`);
+                          if (id) {
+                            addDeletedIngredient(id);
+                          }
                           remove(index);
                         }}
                       >
@@ -128,7 +135,7 @@ const IngredientsTab = ({ fields, append, remove, form }: TabType) => {
         className="bg-transparent border-dashed w-full"
         onClick={(e) => {
           e.preventDefault();
-          append({ name: "", quantity: 0, unit: "" });
+          append({ id: 0, name: "", quantity: "0", unit: "" });
         }}
       >
         + Add Ingredient
@@ -138,6 +145,8 @@ const IngredientsTab = ({ fields, append, remove, form }: TabType) => {
 };
 
 const DirectionsTab = ({ fields, append, remove, form }: TabType) => {
+  const { addDeletedStep } = useRecipeStore();
+
   return (
     <div className="flex flex-col gap-5">
       <Accordion type="multiple" className="flex flex-col gap-3">
@@ -156,6 +165,12 @@ const DirectionsTab = ({ fields, append, remove, form }: TabType) => {
                         className="text-primary font-medium"
                         onClick={(e) => {
                           e.preventDefault();
+                          const stepId = form.getValues(
+                            `steps.${index}.stepId`,
+                          );
+                          if (stepId) {
+                            addDeletedStep(stepId);
+                          }
                           remove(index);
                         }}
                       >
@@ -176,6 +191,7 @@ const DirectionsTab = ({ fields, append, remove, form }: TabType) => {
         onClick={(e) => {
           e.preventDefault();
           append({
+            stepId: 0,
             stepNumber: fields.length + 1,
             instruction: "",
           });

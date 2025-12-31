@@ -2,10 +2,10 @@ import { Button } from "../ui/button";
 import { Popover, PopoverContent } from "../ui/popover";
 import { PopoverTrigger } from "@radix-ui/react-popover";
 import { ChevronDown } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, convertMToHM } from "@/lib/utils";
 import { Field, FieldError, FieldGroup, FieldLabel } from "../ui/field";
 import { Controller, UseFormReturn } from "react-hook-form";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import z from "zod";
 import { recipeSchema } from "@/schemas/recipeSchema";
 
@@ -23,8 +23,10 @@ const minutes = Array.from({ length: 60 }, (_, i) => i);
 
 const CookingTimeSelector = ({
   form,
+  value,
 }: {
   form: UseFormReturn<z.infer<typeof recipeSchema>>;
+  value: number | undefined;
 }) => {
   const [cookingTime, setCookingTime] = useState({
     hourOpen: false,
@@ -36,6 +38,17 @@ const CookingTimeSelector = ({
   const updateCookingTime = (key: string, value: number | boolean) => {
     setCookingTime((prev) => ({ ...prev, [key]: value }));
   };
+
+  useEffect(() => {
+    if (value) {
+      const { hour, minute } = convertMToHM(value);
+      setCookingTime((prev) => ({
+        ...prev,
+        hour,
+        minute,
+      }));
+    }
+  }, [value]);
 
   return (
     <FieldGroup>
