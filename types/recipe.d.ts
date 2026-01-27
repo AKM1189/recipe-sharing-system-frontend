@@ -1,4 +1,5 @@
 import { RecipeCategory } from "./category";
+import { Review } from "./review";
 import { User } from "./user";
 
 export interface Recipe {
@@ -13,7 +14,9 @@ export interface Recipe {
   createdAt: string;
   updatedAt?: string;
   userId: string; // relation
-  comments?: Comment[];
+  rating: string;
+  ratingCount: number;
+  reviews: Review[];
   status: string;
   ingredients: RecipeIngredients[];
   steps: RecipeSteps[];
@@ -46,6 +49,7 @@ export interface CategoriesPayload {
 export interface RecipeSteps {
   id?: number;
   stepNumber: number;
+  title: string;
   instruction: string;
   image?: File | undefined;
   imageUrl?: string | undefined;

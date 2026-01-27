@@ -22,6 +22,11 @@ export default function StepForm({
 
   const imageUrl = form.getValues(`steps.${index}.imageUrl`);
 
+  const stepTitleState = form.getFieldState(
+    `steps.${index}.title`,
+    form.formState,
+  );
+
   const stepInstructionState = form.getFieldState(
     `steps.${index}.instruction`,
     form.formState,
@@ -54,6 +59,16 @@ export default function StepForm({
         hidden
         autoComplete="off"
       />
+
+      <FieldGroup className="mt-3 gap-3">
+        <FieldLabel htmlFor="title">Title</FieldLabel>
+        <Input
+          {...form.register(`steps.${index}.title`)}
+          id="title"
+          autoComplete="off"
+        />
+        {stepTitleState.error && <FieldError errors={[stepTitleState.error]} />}
+      </FieldGroup>
 
       <FieldGroup className="mt-3 gap-3">
         <FieldLabel htmlFor="instruction">Instruction</FieldLabel>

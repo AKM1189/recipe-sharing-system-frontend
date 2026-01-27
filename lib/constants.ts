@@ -13,3 +13,7 @@ export enum RecipeDifficulty {
   MEDIUM = "MEDIUM",
   HARD = "HARD",
 }
+
+export const RESPONSE_ERROR = {
+  SERVER_UNREACHABLE: "SERVER_UNREACHABLE",
+};

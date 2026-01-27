@@ -8,4 +8,6 @@ export const endpoints = {
   },
   recipe: "/recipes",
   category: "/categories",
+  favourite: "/favourites",
+  users: "/users",
 };

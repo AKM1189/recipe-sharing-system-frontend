@@ -12,21 +12,14 @@ import { routes } from "@/lib/routes";
 import { setCookie } from "@/lib/cookieHandler";
 import { authConstants } from "@/lib/constants";
 import { useAuthStore } from "@/store/auth.store";
-
-const formSchema = z.object({
-  email: z
-    .string()
-    .nonempty({ message: "Email is required" })
-    .email({ message: "Invalid Email" }),
-  password: z.string().nonempty({ message: "Password is required" }),
-});
+import { loginSchema } from "@/schemas/authSchema";
 
 export function LoginForm() {
   const router = useRouter();
   const { setUser } = useAuthStore();
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof loginSchema>>({
+    resolver: zodResolver(loginSchema),
     defaultValues: {
       email: "",
       password: "",
@@ -35,7 +28,7 @@ export function LoginForm() {
 
   const { mutate } = useLogin();
 
-  function onSubmit(data: z.infer<typeof formSchema>) {
+  function onSubmit(data: z.infer<typeof loginSchema>) {
     mutate(data, {
       onSuccess: (data) => {
         successToast(data);
@@ -49,7 +42,7 @@ export function LoginForm() {
   }
 
   return (
-    <form id="form-rhf-demo" onSubmit={form.handleSubmit(onSubmit)}>
+    <form id="login-form" onSubmit={form.handleSubmit(onSubmit)}>
       <FieldGroup>
         <Controller
           name="email"
@@ -61,7 +54,7 @@ export function LoginForm() {
                 {...field}
                 id="email"
                 aria-invalid={fieldState.invalid}
-                placeholder="Enter you email"
+                placeholder="Enter your email"
                 autoComplete="off"
               />
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
@@ -85,7 +78,7 @@ export function LoginForm() {
             </Field>
           )}
         />
-        <Button type="submit" form="form-rhf-demo">
+        <Button type="submit" form="login-form">
           Login
         </Button>
       </FieldGroup>

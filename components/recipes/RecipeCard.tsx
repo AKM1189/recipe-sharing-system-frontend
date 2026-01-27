@@ -3,42 +3,105 @@
 import { routes } from "@/lib/routes";
 import { useAuthStore } from "@/store/auth.store";
 import { Recipe } from "@/types";
-import { Clock, Edit, Pen, Utensils } from "lucide-react";
-import Image from "next/image";
+import { Clock, Heart, Pen, Star, Trash2, Utensils } from "lucide-react";
 import { useRouter } from "next/navigation";
+import CardActionIcon from "./CardActionIcon";
+import { useEffect, useState } from "react";
+import {
+  useAddToFavourite,
+  useRemoveFromFavourite,
+} from "@/lib/queries/recipe.queries";
+import { Favourite } from "@/types/favourite";
 
 export default function RecipeCard({
-  key,
   recipe,
+  favourites = [],
 }: {
-  key: number;
   recipe: Recipe;
+  favourites: Favourite[];
 }) {
   const router = useRouter();
   const { user } = useAuthStore();
+  const { mutate: addToFavourite } = useAddToFavourite();
+  const { mutate: removeFromFavourite } = useRemoveFromFavourite();
+  const [isLiked, setIsLiked] = useState(false);
+
+  useEffect(() => {
+    const isFavourite = favourites.some((item) => item.recipeId === recipe.id);
+    setIsLiked(isFavourite);
+  }, [favourites]);
+
+  const handleHeartClick = () => {
+    if (isLiked)
+      removeFromFavourite(
+        { recipeId: recipe.id },
+        {
+          onSuccess: () => {
+            setIsLiked(false);
+          },
+        },
+      );
+    else
+      addToFavourite(
+        { recipeId: recipe.id },
+        {
+          onSuccess: () => {
+            setIsLiked(true);
+          },
+        },
+      );
+  };
+
+  const handlePenClick = () => {
+    router.push(`${routes.private.updateRecipe}/${recipe.id}`);
+  };
+
   return (
     <div
-      key={key}
       className="h-full flex flex-col max-w-[300px] gap-3 rounded-xl overflow-hidden cursor-pointer"
       onClick={() => router.push(`${routes.public.recipes}/${recipe.id}`)}
     >
-      <div className="relative">
+      <div className="relative bg-gray-200 rounded-lg">
         <img
-          className="aspect-[1/1] w-full min-w-[300px] h-auto min-h-[400px] rounded-lg"
+          className="aspect-square w-full min-w-[300px] h-auto min-h-[400px] rounded-lg"
           src={process.env.NEXT_PUBLIC_IMAGE_URL + recipe.imageUrl}
-          alt={recipe.title}
+          // alt={recipe.title}
         />
-        {user?.id === recipe.userId && (
-          <span
-            className="absolute top-5 right-3 w-8 h-8 bg-white shadow-md rounded-full flex justify-center items-center"
-            onClick={(e) => {
-              e.stopPropagation();
-              router.push(`${routes.private.updateRecipe}/${recipe.id}`);
-            }}
-          >
-            <Pen size={16} color="var(--color-primary)" />
+        <div className="absolute top-3 left-3 flex items-center gap-2 bg-white py-1.5 px-3 rounded-full">
+          <Star fill="orange" color="orange" size={18} />{" "}
+          <span className="text-sm font-semibold">
+            {parseInt(recipe.rating) === 0
+              ? "N/A"
+              : parseFloat(recipe.rating).toFixed(1)}
           </span>
-        )}
+        </div>
+        <div className="absolute top-3 right-3 flex flex-col gap-3">
+          <CardActionIcon
+            icon={
+              <Heart
+                size={22}
+                color="var(--color-primary)"
+                fill={isLiked ? "var(--color-primary)" : "white"}
+              />
+            }
+            handleClick={handleHeartClick}
+          />
+          {user?.id === recipe.userId && (
+            <CardActionIcon
+              icon={<Pen size={22} color="var(--color-primary)" fill="white" />}
+              handleClick={handlePenClick}
+            />
+          )}
+
+          {user?.id === recipe.userId && (
+            <CardActionIcon
+              icon={
+                <Trash2 size={22} color="var(--color-primary)" fill="white" />
+              }
+              handleClick={handlePenClick}
+            />
+          )}
+        </div>
       </div>
       <div className="flex flex-wrap gap-2 mt-2">
         {recipe.categories.map((category) => (

@@ -1,9 +1,7 @@
 "use client";
 
-import * as React from "react";
 import Link from "next/link";
-import { LogIn, Menu } from "lucide-react";
-
+import { LogIn } from "lucide-react";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -12,12 +10,6 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
-import { useIsMobile } from "@/app/hooks/use-mobile";
-import { routes } from "@/lib/routes";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { useAuthStore } from "@/store/auth.store";
-import { Popover, PopoverTrigger } from "../ui/popover";
-import { PopoverContent } from "@radix-ui/react-popover";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -27,13 +19,20 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { useLogout } from "@/lib/queries/auth.queries";
-import { clearCookies, getCookie } from "@/lib/cookieHandler";
+import { getCookie } from "@/lib/cookieHandler";
 import { authConstants } from "@/lib/constants";
 import { NavbarDialog } from "./NavbarDialog";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { useIsMobile } from "@/app/hooks/use-mobile";
+import { routes } from "@/lib/routes";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { useAuthStore } from "@/store/auth.store";
+import { getImageUrl } from "@/lib/utils";
 
 export function Navbar() {
   const isMobile = useIsMobile();
-  const [IsNavbarOpen, setIsNavbarOpen] = React.useState(false);
+  const [openProfileDrawer, setOpenProfileDrawer] = useState(false);
 
   return (
     <div className="flex justify-between items-center h-20">
@@ -82,7 +81,7 @@ export function Navbar() {
         <div className="lg:hidden">
           <NavbarDialog />
         </div>
-        <Profile />
+        <Profile setOpenProfileDrawer={setOpenProfileDrawer} />
       </div>
     </div>
   );
@@ -108,9 +107,14 @@ function ListItem({
   );
 }
 
-function Profile() {
+function Profile({
+  setOpenProfileDrawer,
+}: {
+  setOpenProfileDrawer: (value: boolean) => void;
+}) {
   const { user } = useAuthStore();
   const { mutate } = useLogout();
+  const router = useRouter();
 
   const handleLogout = () => {
     const deviceId = getCookie(authConstants.deviceId);
@@ -120,12 +124,26 @@ function Profile() {
     }
   };
 
+  const onMyRecipesClick = () => {
+    router.push(routes.private.myRecipe);
+  };
+
+  const onFavouriteClick = () => {
+    router.push(routes.private.favourites);
+  };
+  console.log("user ✅", user);
   if (user)
     return (
       <DropdownMenu>
         <DropdownMenuTrigger className="flex items-center gap-3">
           <Avatar>
-            <AvatarImage src="https://github.com/shadcn.png" />
+            <AvatarImage
+              src={
+                user.profileUrl
+                  ? getImageUrl(user.profileUrl)
+                  : "https://github.com/shadcn.png"
+              }
+            />
             <AvatarFallback>CN</AvatarFallback>
           </Avatar>
           <span>{user.name}</span>
@@ -133,9 +151,15 @@ function Profile() {
         <DropdownMenuContent className="w-50" align="end">
           <DropdownMenuLabel>My Account</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>Profile</DropdownMenuItem>
-          <DropdownMenuItem>My Recipes</DropdownMenuItem>
-          <DropdownMenuItem>Saved</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => router.push(routes.private.profile)}>
+            Profile
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={onMyRecipesClick}>
+            My Recipes
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={onFavouriteClick}>
+            Favourites
+          </DropdownMenuItem>
           <DropdownMenuItem
             className="text-destructive hover:text-destructive!"
             onClick={handleLogout}

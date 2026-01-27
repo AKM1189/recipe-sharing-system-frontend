@@ -14,7 +14,8 @@ export const successToast = (
 
 export const errorToast = (error: any, defaultMsg: string) => {
   let toastMsg = defaultMsg;
-  const responseMsg = error?.response?.data?.message?.message;
+  const responseMsg =
+    error?.response?.data?.message || error?.response?.data?.message?.message;
   if (Array.isArray(responseMsg)) {
     toastMsg = responseMsg[0][0].toUpperCase() + responseMsg[0]?.slice(1);
   } else if (responseMsg) {

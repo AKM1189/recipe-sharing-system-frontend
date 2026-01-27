@@ -3,6 +3,7 @@ import { endpoints } from "../endpoints";
 import { clearCookies, getCookie, setCookie } from "../cookieHandler";
 import { authConstants } from "../constants";
 import { navigateToLogin } from "../utils";
+import { routes } from "../routes";
 
 export const api: AxiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_BASE_URL,
@@ -61,8 +62,14 @@ api.interceptors.response.use(
 
     if (error?.response?.status === 401 && !originalRequest._retry) {
       const refreshToken = getCookie(authConstants.refreshToken);
+      const isAuthRoute = Object.values(endpoints.auth).includes(
+        originalRequest.url,
+      );
 
       if (!refreshToken) {
+        if (originalRequest.method === "post" && !isAuthRoute) {
+          window.location.replace(routes.auth.login);
+        }
         return Promise.reject(error);
       }
 
@@ -95,6 +102,7 @@ api.interceptors.response.use(
         processQueue(err, null);
         isRefreshing = false;
         clearCookies();
+        console.log("api error", err);
         return Promise.reject(err);
       }
     }

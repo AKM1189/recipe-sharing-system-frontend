@@ -10,6 +10,7 @@ export const ingredientSchema = z.object({
 export const stepSchema = z.object({
   stepId: z.number().optional(),
   stepNumber: z.number().min(1, "Step number is required"),
+  title: z.string().min(1, "Title is required"),
   instruction: z.string().min(1, "Instruction is required"),
   image: z.instanceof(File).optional(),
   previewUrl: z.string().optional(),

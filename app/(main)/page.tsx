@@ -1,3 +1,4 @@
+import { ErrorState } from "@/components/common/ErrorState";
 import RecipesGrid from "@/components/recipes/RecipeGrid";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -5,33 +6,49 @@ import { dummyRecipes } from "@/data";
 import { serverFetch } from "@/lib/api/server-api";
 import { constants } from "@/lib/constants";
 import { endpoints } from "@/lib/endpoints";
+import { Category, Recipe } from "@/types";
 import { Search, Utensils } from "lucide-react";
+import Recipes from "./recipes/page";
+import RecipesSection from "@/components/recipes/Recipes";
+import Link from "next/link";
 
 export default async function Home() {
-  const { data: recipes } = await serverFetch(endpoints.recipe);
+  const recipes: { data: Recipe[]; error: string | undefined } =
+    await serverFetch(endpoints.recipe);
+  const categories: { data: Category[]; error: string | undefined } =
+    await serverFetch(endpoints.category);
 
-  console.log("recipes", recipes);
-  const categories = [
-    "APPETIZERS",
-    "DRINKS",
-    "DESSERTS",
-    "SNACKS",
-    "BREADS",
-    "BREAKFASTS",
-    "HEALTHY",
-    "MEAT",
-    "APPETIZERS",
-    "DRINKS",
-    "DESSERTS",
-    "SNACKS",
-    "BREADS",
-    "BREAKFASTS",
-    "HEALTHY",
-    "MEAT",
-  ];
+  // const categories = [
+  //   "APPETIZERS",
+  //   "DRINKS",
+  //   "DESSERTS",
+  //   "SNACKS",
+  //   "BREADS",
+  //   "BREAKFASTS",
+  //   "HEALTHY",
+  //   "MEAT",
+  //   "APPETIZERS",
+  //   "DRINKS",
+  //   "DESSERTS",
+  //   "SNACKS",
+  //   "BREADS",
+  //   "BREAKFASTS",
+  //   "HEALTHY",
+  //   "MEAT",
+  // ];
+
+  if (recipes.error === "SERVER_UNREACHABLE") {
+    return (
+      <ErrorState
+        title="Service temporarily unavailable"
+        message="We can’t connect to the server right now. Please try again later."
+      />
+    );
+  }
+  console.log("categories", categories);
 
   return (
-    <div className="mx-20">
+    <div>
       <div className="h-[calc(100vh-80px)] flex flex-col justify-center items-center">
         <div className="text-center max-w-[700px] mx-auto">
           <h1 className="text-5xl font-bold">{constants.title}</h1>
@@ -56,25 +73,24 @@ export default async function Home() {
         </div>
 
         <div className="mt-16 flex flex-wrap justify-center gap-x-2 gap-y-4 max-w-[1000px]">
-          {categories.map((category, index) => (
-            <a href={`/recipes/categories/${category}`} key={index}>
-              <Badge className="text-sm px-4 py-2.5">{category}</Badge>
-            </a>
-          ))}
+          {Array.isArray(categories?.data) &&
+            categories?.data.map((category, index) => (
+              <Link href={`/recipes/categories/${category.name}`} key={index}>
+                <Badge className="text-sm px-4 py-2.5">
+                  {category.name.toUpperCase()}
+                </Badge>
+              </Link>
+            ))}
         </div>
       </div>
 
       {/* recipes list */}
-      <div className="relative mt-20 flex flex-col items-center">
-        <h1 className="text-5xl font-bold mb-5">New Recipes</h1>
-        <p className="mb-14">
-          Explore our latest recipes, from quick snacks to hearty meals and
-          indulgent desserts.
-        </p>
-        <div className="min-w-0 w-full">
-          {Array.isArray(recipes) && <RecipesGrid recipes={recipes} />}
-        </div>
-      </div>
+      <RecipesSection
+        title="New Recipes"
+        description="Explore our latest recipes, from quick snacks to hearty meals and
+        indulgent desserts."
+        recipes={recipes.data}
+      />
     </div>
   );
 }
