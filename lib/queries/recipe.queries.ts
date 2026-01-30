@@ -2,15 +2,24 @@ import { QueryClient, useMutation, useQuery } from "@tanstack/react-query";
 import {
   addRecipe,
   addToFavourite,
+  deleteRecipe,
   getFavouriteByUser,
   getFavouriteRecipesByUser,
   getRecipeById,
   getRecipes,
   getRecipesByUser,
   removeFromFavourite,
+  searchRecipes,
   updateRecipe,
 } from "../api/recipe.api";
 import { errorToast, successToast } from "../handleToast";
+
+export const useGetRecipes = (query: string) => {
+  return useQuery({
+    queryKey: ["recipes"],
+    queryFn: () => getRecipes(query),
+  });
+};
 
 export const useAddRecipe = () => {
   return useMutation({
@@ -40,13 +49,6 @@ export const useUpdateRecipe = () => {
     onError: (err) => {
       errorToast(err, "Recipe updating failed");
     },
-  });
-};
-
-export const useGetRecipes = () => {
-  return useQuery({
-    queryKey: ["recipes"],
-    queryFn: getRecipes,
   });
 };
 
@@ -90,9 +92,30 @@ export const useRemoveFromFavourite = () => {
   });
 };
 
+export const useDeleteRecipe = () => {
+  const queryClient = new QueryClient();
+  return useMutation({
+    mutationFn: ({ recipeId }: { recipeId: number }) => deleteRecipe(recipeId),
+    onSuccess: () => {
+      successToast("Recipe delete successfully!");
+      queryClient.invalidateQueries({ queryKey: ["recipes"] });
+    },
+    onError: (error) => {
+      errorToast(error, "Failed to delete recipe!");
+    },
+  });
+};
+
 export const useGetRecipesByUser = () => {
   return useQuery({
     queryKey: ["recipes", "user"],
     queryFn: getRecipesByUser,
+  });
+};
+
+export const useSearchRecipe = (search: string) => {
+  return useQuery({
+    queryKey: ["recipes", search],
+    queryFn: () => searchRecipes(search),
   });
 };

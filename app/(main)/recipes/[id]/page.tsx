@@ -31,7 +31,6 @@ export default async function RecipePage({ params }: PageProps) {
   const { data: recipe }: { data: Recipe } = await serverFetch(
     `${endpoints.recipe}/${id}`,
   );
-  console.log("recipe", recipe);
   if (recipe)
     return (
       <div className="px-20">

@@ -7,12 +7,14 @@ import { reviewSchema } from "@/schemas/reviewSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
 import RatingIcon from "../Rating/RatingIcon";
-import { useRouter } from "next/navigation";
-import { routes } from "@/lib/routes";
 import { Textarea } from "../../ui/textarea";
 import { useAddReview, useUpdateReview } from "@/lib/queries/review.queries";
 import { Review } from "@/types/review";
 import { useReviewStore } from "@/store/review.store";
+import { useAuthStore } from "@/store/auth.store";
+import { useConfirmStore } from "@/store/confirm.store";
+import { useRouter } from "next/navigation";
+import { routes } from "@/lib/routes";
 
 const ReviewForm = ({
   recipeId,
@@ -26,6 +28,9 @@ const ReviewForm = ({
   const [fillCount, setFillCount] = useState(0);
   const { editingReview, removeEditingReview, removeReplyingToReview } =
     useReviewStore();
+  const { user } = useAuthStore();
+  const { showConfirm, removeConfirm } = useConfirmStore();
+  const router = useRouter();
 
   const defaultValues = review
     ? {
@@ -47,6 +52,15 @@ const ReviewForm = ({
   }, [review]);
 
   const onSubmit = (values: z.infer<typeof reviewSchema>) => {
+    if (!user) {
+      showConfirm({
+        show: true,
+        title: "Please Log In first!",
+        body: "You need to log in to write a review. Go to Login page?",
+        onConfirm: () => router.push(routes.auth.login),
+      });
+      return;
+    }
     if (editingReview) {
       updateReview(
         {
@@ -158,7 +172,6 @@ const ReviewForm = ({
           </button>
           <button
             type="submit"
-            onClick={() => console.log(form.formState.errors)}
             className="w-[100px] mt-4 px-3 py-2 bg-primary text-white rounded"
           >
             Submit

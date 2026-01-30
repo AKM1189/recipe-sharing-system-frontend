@@ -9,9 +9,11 @@ import CardActionIcon from "./CardActionIcon";
 import { useEffect, useState } from "react";
 import {
   useAddToFavourite,
+  useDeleteRecipe,
   useRemoveFromFavourite,
 } from "@/lib/queries/recipe.queries";
 import { Favourite } from "@/types/favourite";
+import { useConfirmStore } from "@/store/confirm.store";
 
 export default function RecipeCard({
   recipe,
@@ -24,14 +26,16 @@ export default function RecipeCard({
   const { user } = useAuthStore();
   const { mutate: addToFavourite } = useAddToFavourite();
   const { mutate: removeFromFavourite } = useRemoveFromFavourite();
+  const { mutate: deleteRecipe } = useDeleteRecipe();
   const [isLiked, setIsLiked] = useState(false);
+  const { showConfirm } = useConfirmStore();
 
   useEffect(() => {
     const isFavourite = favourites.some((item) => item.recipeId === recipe.id);
     setIsLiked(isFavourite);
   }, [favourites]);
 
-  const handleHeartClick = () => {
+  const handleFavouriteClick = () => {
     if (isLiked)
       removeFromFavourite(
         { recipeId: recipe.id },
@@ -52,10 +56,27 @@ export default function RecipeCard({
       );
   };
 
-  const handlePenClick = () => {
+  const handleUpdateClick = () => {
     router.push(`${routes.private.updateRecipe}/${recipe.id}`);
   };
 
+  const handleDeleteClick = () => {
+    showConfirm({
+      show: true,
+      title: "Delete Recipe",
+      body: "Are you sure you want to delete this recipe?",
+      onConfirm: () => {
+        deleteRecipe(
+          { recipeId: recipe.id },
+          {
+            onSuccess: () => router.refresh(),
+          },
+        );
+      },
+    });
+  };
+
+  console.log("card", recipe);
   return (
     <div
       className="h-full flex flex-col max-w-[300px] gap-3 rounded-xl overflow-hidden cursor-pointer"
@@ -63,7 +84,7 @@ export default function RecipeCard({
     >
       <div className="relative bg-gray-200 rounded-lg">
         <img
-          className="aspect-square w-full min-w-[300px] h-auto min-h-[400px] rounded-lg"
+          className="aspect-square w-full min-w-[300px] h-auto min-h-[400px] rounded-lg object-cover"
           src={process.env.NEXT_PUBLIC_IMAGE_URL + recipe.imageUrl}
           // alt={recipe.title}
         />
@@ -84,12 +105,12 @@ export default function RecipeCard({
                 fill={isLiked ? "var(--color-primary)" : "white"}
               />
             }
-            handleClick={handleHeartClick}
+            handleClick={handleFavouriteClick}
           />
           {user?.id === recipe.userId && (
             <CardActionIcon
               icon={<Pen size={22} color="var(--color-primary)" fill="white" />}
-              handleClick={handlePenClick}
+              handleClick={handleUpdateClick}
             />
           )}
 
@@ -98,7 +119,7 @@ export default function RecipeCard({
               icon={
                 <Trash2 size={22} color="var(--color-primary)" fill="white" />
               }
-              handleClick={handlePenClick}
+              handleClick={handleDeleteClick}
             />
           )}
         </div>

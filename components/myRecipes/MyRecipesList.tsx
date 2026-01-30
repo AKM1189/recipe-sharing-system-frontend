@@ -4,7 +4,7 @@ import {
   useGetRecipesByUser,
 } from "@/lib/queries/recipe.queries";
 import { useEffect } from "react";
-import RecipesSection from "../recipes/Recipes";
+import RecipesSection from "../recipes/RecipesSection";
 
 const MyRecipesList = () => {
   const { data } = useGetRecipesByUser();

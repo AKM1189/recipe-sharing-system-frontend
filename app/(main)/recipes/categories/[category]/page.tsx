@@ -1,5 +1,5 @@
 import RecipesGrid from "@/components/recipes/RecipeGrid";
-import RecipesSection from "@/components/recipes/Recipes";
+import RecipesSection from "@/components/recipes/RecipesSection";
 import { Badge } from "@/components/ui/badge";
 import { serverFetch } from "@/lib/api/server-api";
 import { endpoints } from "@/lib/endpoints";
@@ -11,7 +11,6 @@ export default async function RecipesByCategory({
 }) {
   const { category } = await params;
   const recipes = await serverFetch(`${endpoints.recipe}/category/${category}`);
-  const title = "Recipes for " + category.replace("%20", " ").toUpperCase();
   return (
     <div className="mt-10">
       <div className="relative mt-20 flex flex-col items-center">

@@ -23,65 +23,78 @@ import { getCookie } from "@/lib/cookieHandler";
 import { authConstants } from "@/lib/constants";
 import { NavbarDialog } from "./NavbarDialog";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useIsMobile } from "@/app/hooks/use-mobile";
 import { routes } from "@/lib/routes";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { useAuthStore } from "@/store/auth.store";
-import { getImageUrl } from "@/lib/utils";
+import { cn, getImageUrl } from "@/lib/utils";
+
+const menusConstant = {
+  home: "Home",
+  recipes: "Recipes",
+  addRecipe: "Add Recipe",
+};
+
+const menus = [
+  {
+    label: "Home",
+    href: routes.public.home,
+  },
+  {
+    label: "Recipes",
+    href: routes.public.recipes,
+  },
+  {
+    label: "Add Recipe",
+    href: routes.private.addRecipe,
+  },
+];
 
 export function Navbar() {
   const isMobile = useIsMobile();
   const [openProfileDrawer, setOpenProfileDrawer] = useState(false);
+  const [activeMenu, setActiveMenu] = useState<string>(menusConstant.home);
+  const { pathname } = window.location;
+
+  useEffect(() => {
+    if (pathname.includes(routes.private.addRecipe)) {
+      setActiveMenu(menusConstant.addRecipe);
+    } else if (pathname.includes(routes.public.recipes)) {
+      setActiveMenu(menusConstant.recipes);
+    } else setActiveMenu(menusConstant.home);
+  }, [pathname]);
 
   return (
     <div className="flex justify-between items-center h-20">
-      <NavigationMenu
-        viewport={isMobile}
-        className="flex justify-between items-center h-full"
-      >
-        <h2 className="text-2xl text-primary font-extrabold">Recipe</h2>
-        <NavigationMenuList className="flex-wrap ms-30 gap-8 max-lg:hidden ">
-          <NavigationMenuItem>
-            <NavigationMenuLink href={routes.public.home}>
-              Home
-            </NavigationMenuLink>
-          </NavigationMenuItem>
-          <NavigationMenuItem>
-            <NavigationMenuLink href={routes.public.recipes}>
-              Recipes
-            </NavigationMenuLink>
-          </NavigationMenuItem>
-          <NavigationMenuItem className="hidden md:block">
-            <NavigationMenuTrigger>Categories</NavigationMenuTrigger>
-            <NavigationMenuContent>
-              <ul className="grid w-[200px] gap-4">
-                <li>
-                  <NavigationMenuLink asChild>
-                    <Link href="#">Components</Link>
-                  </NavigationMenuLink>
-                  <NavigationMenuLink asChild>
-                    <Link href="#">Documentation</Link>
-                  </NavigationMenuLink>
-                  <NavigationMenuLink asChild>
-                    <Link href="#">Blocks</Link>
-                  </NavigationMenuLink>
-                </li>
-              </ul>
-            </NavigationMenuContent>
-          </NavigationMenuItem>
-          <NavigationMenuItem>
-            <NavigationMenuLink href={routes.private.addRecipe}>
-              Add Recipe
-            </NavigationMenuLink>
-          </NavigationMenuItem>
-        </NavigationMenuList>
-      </NavigationMenu>
-      <div className="flex gap-8 items-center">
-        <div className="lg:hidden">
-          <NavbarDialog />
+      <h2 className="text-2xl text-primary font-extrabold">Recipe</h2>
+      <div className="flex items-center gap-10">
+        <NavigationMenu
+          viewport={isMobile}
+          className="flex justify-between items-center h-full"
+        >
+          <NavigationMenuList className="flex-wrap ms-30 gap-8 max-lg:hidden ">
+            {menus.map((menu, index) => (
+              <NavigationMenuItem key={index}>
+                <NavigationMenuLink
+                  href={menu.href}
+                  className={cn(
+                    activeMenu === menu.label &&
+                      "text-primary hover:text-primary focus:text-primary",
+                  )}
+                >
+                  {menu.label}
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+            ))}
+          </NavigationMenuList>
+        </NavigationMenu>
+        <div className="flex gap-8 items-center">
+          <div className="lg:hidden">
+            <NavbarDialog />
+          </div>
+          <Profile setOpenProfileDrawer={setOpenProfileDrawer} />
         </div>
-        <Profile setOpenProfileDrawer={setOpenProfileDrawer} />
       </div>
     </div>
   );
@@ -118,7 +131,6 @@ function Profile({
 
   const handleLogout = () => {
     const deviceId = getCookie(authConstants.deviceId);
-    console.log("deviceId", deviceId);
     if (deviceId) {
       mutate({ deviceId });
     }
@@ -131,7 +143,6 @@ function Profile({
   const onFavouriteClick = () => {
     router.push(routes.private.favourites);
   };
-  console.log("user ✅", user);
   if (user)
     return (
       <DropdownMenu>

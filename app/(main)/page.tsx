@@ -9,8 +9,10 @@ import { endpoints } from "@/lib/endpoints";
 import { Category, Recipe } from "@/types";
 import { Search, Utensils } from "lucide-react";
 import Recipes from "./recipes/page";
-import RecipesSection from "@/components/recipes/Recipes";
+import RecipesSection from "@/components/recipes/RecipesSection";
 import Link from "next/link";
+import Form from "next/form";
+import Categories from "@/components/categories/Categories";
 
 export default async function Home() {
   const recipes: { data: Recipe[]; error: string | undefined } =
@@ -59,29 +61,26 @@ export default async function Home() {
           </p>
         </div>
 
-        <div className="relative w-[600px] mt-16 flex items-center">
-          <div className="absolute left-5">
-            <Utensils color="var(--color-primary)" />
+        <Form action="/recipes">
+          <div className="relative w-[600px] mt-16 flex items-center">
+            <div className="absolute left-5">
+              <Utensils color="var(--color-primary)" />
+            </div>
+            <Input
+              name="query"
+              placeholder="Find recipes to cook today"
+              className="ps-16 bg-white! focus:outline-0! focus:ring-0! h-14 text-[16px]! shadow-md rounded-full"
+            />
+            <button
+              type="submit"
+              className="absolute right-2 w-10 h-10 rounded-full bg-primary flex justify-center items-center"
+            >
+              <Search color="#ffffff" className="w-6 h-6" />
+            </button>
           </div>
-          <Input
-            placeholder="Find recipes to cook today"
-            className="ps-16 bg-white! focus:outline-0! focus:ring-0! h-14 text-[16px]! shadow-md rounded-full"
-          />
-          <div className="absolute right-2 w-10 h-10 rounded-full bg-primary flex justify-center items-center">
-            <Search color="#ffffff" className="w-6 h-6" />
-          </div>
-        </div>
+        </Form>
 
-        <div className="mt-16 flex flex-wrap justify-center gap-x-2 gap-y-4 max-w-[1000px]">
-          {Array.isArray(categories?.data) &&
-            categories?.data.map((category, index) => (
-              <Link href={`/recipes/categories/${category.name}`} key={index}>
-                <Badge className="text-sm px-4 py-2.5">
-                  {category.name.toUpperCase()}
-                </Badge>
-              </Link>
-            ))}
-        </div>
+        <Categories categories={categories} />
       </div>
 
       {/* recipes list */}

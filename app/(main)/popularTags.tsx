@@ -1,14 +1,18 @@
+import Categories from "@/components/categories/Categories";
 import { Navbar } from "@/components/layout/Navbar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { serverFetch } from "@/lib/api/server-api";
 import { constants } from "@/lib/constants";
+import { endpoints } from "@/lib/endpoints";
+import { Category } from "@/types";
 import { Search, Utensils } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
-export default function PopularTags() {
+export default async function PopularTags() {
   const tags = [
     "APPETIZERS",
     "DRINKS",
@@ -27,6 +31,8 @@ export default function PopularTags() {
     "HEALTHY",
     "MEAT",
   ];
+  const categories: { data: Category[]; error: string | undefined } =
+    await serverFetch(endpoints.category);
   return (
     <div className="mt-28">
       <div className="min-h-[100px] py-20 px-5 bg-secondary flex flex-col justify-center items-center">
@@ -37,19 +43,7 @@ export default function PopularTags() {
             explore delicious options with one click.
           </p>
         </div>
-
-        <div className="mt-16 flex flex-wrap justify-center gap-x-2 gap-y-4 max-w-[1000px]">
-          {tags.map((tag, index) => (
-            <a href={`/recipes/tags/${tag}`} key={index}>
-              <Badge
-                className="text-sm px-4 py-2.5 hover:bg-primary hover:text-white transition-all duration-200"
-                variant={"outline"}
-              >
-                {tag}
-              </Badge>
-            </a>
-          ))}
-        </div>
+        <Categories categories={categories} isFooter={true} />
       </div>
     </div>
   );
