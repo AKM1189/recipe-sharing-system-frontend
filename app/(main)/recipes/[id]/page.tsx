@@ -1,13 +1,10 @@
-import StarIcon from "@/components/common/StarIcon";
-import ReviewForm from "@/components/recipeDetail/Reviews/ReviewForm";
 import RecipeDetailItem from "@/components/recipeDetail/RecipeDetailItem";
 import { Avatar } from "@/components/ui/avatar";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { Progress } from "@/components/ui/progress";
 import { serverFetch } from "@/lib/api/server-api";
 import { endpoints } from "@/lib/endpoints";
-import { formatLowerCaseName, getImageUrl } from "@/lib/utils";
+import { formatLowerCaseName } from "@/lib/utils";
 import { Recipe, RecipeIngredients, RecipeSteps } from "@/types";
 import { AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import {
@@ -19,8 +16,9 @@ import {
   Youtube,
 } from "lucide-react";
 import ReviewList from "@/components/recipeDetail/Reviews/ReviewList";
-import RatingProgressList from "@/components/recipeDetail/Rating/RatingProgress";
 import RatingOverview from "@/components/recipeDetail/Rating/RatingOverview";
+import Image from "@/components/common/Image";
+import ProfileAvatar from "@/components/common/ProfileAvatar";
 
 type PageProps = {
   params: { id: string };
@@ -31,15 +29,16 @@ export default async function RecipePage({ params }: PageProps) {
   const { data: recipe }: { data: Recipe } = await serverFetch(
     `${endpoints.recipe}/${id}`,
   );
+  console.log("by id", recipe);
   if (recipe)
     return (
       <div className="px-20">
         <div className="mt-20">
           <div className="flex gap-20">
             {recipe?.imageUrl && (
-              <img
+              <Image
                 className="rounded-lg h-[500px] min-w-[350px] max-w-[500px] object-cover bg-gray-200"
-                src={getImageUrl(recipe.imageUrl)}
+                publicId={recipe.imageUrl}
                 alt={recipe.title}
               />
             )}
@@ -82,10 +81,7 @@ export default async function RecipePage({ params }: PageProps) {
               {/* author */}
 
               <div className="flex items-center gap-5 mt-10 pb-10 border-b">
-                <Avatar className="size-16">
-                  <AvatarImage src="https://github.com/shadcn.png" />
-                  <AvatarFallback>{recipe.user.name}</AvatarFallback>
-                </Avatar>
+                <ProfileAvatar profileUrl={recipe.user.profileUrl} size={16} />
                 <div>
                   <h2 className="text-lg font-semibold">
                     {formatLowerCaseName(recipe.user.name)}
@@ -142,9 +138,9 @@ export default async function RecipePage({ params }: PageProps) {
                     </p>
                     <div className="mt-5 min-w-[300px] h-auto object-cover">
                       {step.imageUrl && (
-                        <img
-                          className="rounded-lg"
-                          src={getImageUrl(step.imageUrl)}
+                        <Image
+                          className="rounded-lg min-h-[200px] max-h-[300px]"
+                          publicId={step.imageUrl}
                         />
                       )}
                     </div>
@@ -157,10 +153,8 @@ export default async function RecipePage({ params }: PageProps) {
 
         {/* Author */}
         <div className="flex gap-8 mt-16 pt-16 border-t max-w-[900px]">
-          <Avatar className="size-25">
-            <AvatarImage src="https://github.com/shadcn.png" />
-            <AvatarFallback>{recipe.user.name}</AvatarFallback>
-          </Avatar>
+          <ProfileAvatar profileUrl={recipe.user.profileUrl} size={25} />
+
           <div>
             <p className="text-sm text-muted-foreground mb-2">Written By</p>
 

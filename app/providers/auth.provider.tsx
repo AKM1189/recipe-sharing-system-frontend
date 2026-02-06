@@ -25,7 +25,7 @@ export default function AuthProvider({
       setUser(user ?? null);
     }
     if (isNotAuthorized) {
-      router.replace(routes.public.home);
+      router.replace(routes.auth.login);
     }
   }, [isLoading, user]);
 

@@ -1,4 +1,5 @@
 import Categories from "@/components/categories/Categories";
+import NoDataFound from "@/components/common/NoDataFound";
 import { Navbar } from "@/components/layout/Navbar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -44,6 +45,7 @@ export default async function PopularTags() {
           </p>
         </div>
         <Categories categories={categories} isFooter={true} />
+        <NoDataFound data={categories.data} message="No Tags Found!" />
       </div>
     </div>
   );

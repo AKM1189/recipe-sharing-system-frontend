@@ -5,7 +5,7 @@ import {
 } from "@/types";
 import { errorToast, successToast } from "../handleToast";
 import { updateEmail, updatePassword, updateProfile } from "../api/profile.api";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export const useUpdateEmail = () => {
   return useMutation({
@@ -21,6 +21,7 @@ export const useUpdateEmail = () => {
 };
 
 export const useUpdateProfile = () => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({
       userId,
@@ -31,6 +32,7 @@ export const useUpdateProfile = () => {
     }) => updateProfile(userId, body),
     onSuccess: (data) => {
       successToast(data);
+      queryClient.invalidateQueries({ queryKey: ["me"] });
     },
     onError: (error) => {
       errorToast(error, "Profile updating failed!");

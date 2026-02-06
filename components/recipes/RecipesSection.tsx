@@ -1,5 +1,6 @@
 import { Recipe } from "@/types";
 import RecipesGrid from "./RecipeGrid";
+import NoDataFound from "../common/NoDataFound";
 
 const RecipesSection = ({
   title,
@@ -21,6 +22,7 @@ const RecipesSection = ({
       <div className="min-w-0 w-full mt-5">
         {Array.isArray(recipes) && <RecipesGrid recipes={recipes} />}
       </div>
+      <NoDataFound data={recipes} message="No Recipe Found!" />
     </div>
   );
 };

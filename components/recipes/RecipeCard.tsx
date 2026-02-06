@@ -14,6 +14,7 @@ import {
 } from "@/lib/queries/recipe.queries";
 import { Favourite } from "@/types/favourite";
 import { useConfirmStore } from "@/store/confirm.store";
+import Image from "../common/Image";
 
 export default function RecipeCard({
   recipe,
@@ -31,7 +32,7 @@ export default function RecipeCard({
   const { showConfirm } = useConfirmStore();
 
   useEffect(() => {
-    const isFavourite = favourites.some((item) => item.recipeId === recipe.id);
+    const isFavourite = favourites?.some((item) => item.recipeId === recipe.id);
     setIsLiked(isFavourite);
   }, [favourites]);
 
@@ -75,18 +76,15 @@ export default function RecipeCard({
       },
     });
   };
-
-  console.log("card", recipe);
   return (
     <div
       className="h-full flex flex-col max-w-[300px] gap-3 rounded-xl overflow-hidden cursor-pointer"
       onClick={() => router.push(`${routes.public.recipes}/${recipe.id}`)}
     >
       <div className="relative bg-gray-200 rounded-lg">
-        <img
+        <Image
+          publicId={recipe.imageUrl}
           className="aspect-square w-full min-w-[300px] h-auto min-h-[400px] rounded-lg object-cover"
-          src={process.env.NEXT_PUBLIC_IMAGE_URL + recipe.imageUrl}
-          // alt={recipe.title}
         />
         <div className="absolute top-3 left-3 flex items-center gap-2 bg-white py-1.5 px-3 rounded-full">
           <Star fill="orange" color="orange" size={18} />{" "}

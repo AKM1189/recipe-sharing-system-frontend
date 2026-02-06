@@ -7,7 +7,7 @@ import { Field, FieldError, FieldGroup, FieldLabel } from "../ui/field";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
 import { useEffect, useState } from "react";
-import { getImageUrl, handlePreviewImage } from "@/lib/utils";
+import { handlePreviewImage } from "@/lib/utils";
 import { SelectInput } from "../common/SelectInput";
 import { RecipeDifficulty } from "@/lib/constants";
 import { MultiSelectCreatable } from "../common/ComobBoxCreatable";
@@ -22,6 +22,7 @@ import { useAddRecipe, useUpdateRecipe } from "@/lib/queries/recipe.queries";
 import { Category, Recipe } from "@/types";
 import { useRecipeStore } from "@/store/recipe.store";
 import { useGetCategories } from "@/lib/queries/category.queries";
+import Image from "../common/Image";
 
 const createDefaultValues = {
   title: "",
@@ -225,10 +226,10 @@ export function RecipeForm({ recipe }: { recipe?: Recipe }) {
         <ImagePreview src={recipeImageUrl} alt="recipe-image" />
 
         {!recipeImageUrl && recipe?.imageUrl && (
-          <img
+          <Image
             width={200}
             height={200}
-            src={getImageUrl(recipe.imageUrl)}
+            publicId={recipe.imageUrl}
             alt={recipe.title}
           />
         )}

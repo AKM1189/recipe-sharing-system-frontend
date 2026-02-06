@@ -12,12 +12,15 @@ import { handlePreviewImage } from "@/lib/utils";
 import { Pen } from "lucide-react";
 import { Button } from "../ui/button";
 import { useUpdateProfile } from "@/lib/queries/user.queries";
+import ProfileAvatar from "../common/ProfileAvatar";
+import { useLoadingStore } from "@/store/loading.store";
 
 const ProfileUpdateForm = () => {
   const { user } = useAuthStore();
   const [imageUrl, setImageUrl] = useState<string | undefined>();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { mutate } = useUpdateProfile();
+  const { mutate, isPending } = useUpdateProfile();
+  const { setLoading } = useLoadingStore();
 
   const form = useForm<z.infer<typeof profileUpdateSchema>>({
     resolver: zodResolver(profileUpdateSchema),
@@ -37,6 +40,10 @@ const ProfileUpdateForm = () => {
   };
 
   useEffect(() => {
+    setLoading(isPending);
+  }, [isPending]);
+
+  useEffect(() => {
     if (user) {
       form.reset({
         name: user.name ?? "",
@@ -51,11 +58,17 @@ const ProfileUpdateForm = () => {
     return (
       <div>
         <div className="relative mb-8">
-          <Avatar className="size-28">
-            <AvatarImage src={imageUrl ?? "https://github.com/shadcn.png"} />
-            <AvatarFallback>Profile</AvatarFallback>
-          </Avatar>
-          <div className="bg-background border rounded-md flex max-w-7 p-1 absolute left-20 bottom-0 shadow-md cursor-pointer">
+          {imageUrl ? (
+            <Avatar className="w-[100px] h-[100px]">
+              <AvatarImage src={imageUrl} />
+              <AvatarFallback>Profile</AvatarFallback>
+            </Avatar>
+          ) : (
+            <div className="max-w-[100px] max-h-[100px]">
+              <ProfileAvatar profileUrl={user.profileUrl} size={18} />
+            </div>
+          )}
+          <div className="bg-background border rounded-md flex max-w-7 p-1 absolute left-[70px] bottom-0 shadow-md cursor-pointer">
             <Pen
               size={18}
               color="var(--color-primary)"

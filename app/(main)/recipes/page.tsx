@@ -1,12 +1,10 @@
 import RecipesSection from "@/components/recipes/RecipesSection";
 import { Input } from "@/components/ui/input";
-import { getRecipes } from "@/lib/api/recipe.api";
 import { serverFetch } from "@/lib/api/server-api";
 import { endpoints } from "@/lib/endpoints";
 import { Recipe } from "@/types";
 import { Search, Utensils, X } from "lucide-react";
 import Form from "next/form";
-import Link from "next/link";
 
 export default async function Recipes({
   searchParams,

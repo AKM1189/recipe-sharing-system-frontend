@@ -14,7 +14,6 @@ export async function serverFetch(url: string, options: RequestInit = {}) {
       },
       cache: "no-store",
     });
-    console.log("response", response);
 
     if (!response.ok) {
       console.log("fetching error");

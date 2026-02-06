@@ -1,16 +1,11 @@
 import { ErrorState } from "@/components/common/ErrorState";
-import RecipesGrid from "@/components/recipes/RecipeGrid";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { dummyRecipes } from "@/data";
 import { serverFetch } from "@/lib/api/server-api";
 import { constants } from "@/lib/constants";
 import { endpoints } from "@/lib/endpoints";
 import { Category, Recipe } from "@/types";
 import { Search, Utensils } from "lucide-react";
-import Recipes from "./recipes/page";
 import RecipesSection from "@/components/recipes/RecipesSection";
-import Link from "next/link";
 import Form from "next/form";
 import Categories from "@/components/categories/Categories";
 
