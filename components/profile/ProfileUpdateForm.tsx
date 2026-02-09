@@ -59,13 +59,13 @@ const ProfileUpdateForm = () => {
       <div>
         <div className="relative mb-8">
           {imageUrl ? (
-            <Avatar className="w-[100px] h-[100px]">
+            <Avatar className="w-24 h-24">
               <AvatarImage src={imageUrl} />
               <AvatarFallback>Profile</AvatarFallback>
             </Avatar>
           ) : (
             <div className="max-w-[100px] max-h-[100px]">
-              <ProfileAvatar profileUrl={user.profileUrl} size={18} />
+              <ProfileAvatar profileUrl={user.profileUrl} size={24} />
             </div>
           )}
           <div className="bg-background border rounded-md flex max-w-7 p-1 absolute left-[70px] bottom-0 shadow-md cursor-pointer">

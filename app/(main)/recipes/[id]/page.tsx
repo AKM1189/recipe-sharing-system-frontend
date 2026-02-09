@@ -153,7 +153,7 @@ export default async function RecipePage({ params }: PageProps) {
 
         {/* Author */}
         <div className="flex gap-8 mt-16 pt-16 border-t max-w-[900px]">
-          <ProfileAvatar profileUrl={recipe.user.profileUrl} size={25} />
+          <ProfileAvatar profileUrl={recipe.user.profileUrl} size={24} />
 
           <div>
             <p className="text-sm text-muted-foreground mb-2">Written By</p>
