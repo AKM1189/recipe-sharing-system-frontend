@@ -33,7 +33,7 @@ export default async function Home() {
   //   "HEALTHY",
   //   "MEAT",
   // ];
-
+  console.log("recipes", recipes);
   if (recipes.error === "SERVER_UNREACHABLE") {
     return (
       <ErrorState

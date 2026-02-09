@@ -1,81 +1,17 @@
 "use client";
 
 import { routes } from "@/lib/routes";
-import { useAuthStore } from "@/store/auth.store";
 import { Recipe } from "@/types";
 import { Clock, Heart, Pen, Star, Trash2, Utensils } from "lucide-react";
 import { useRouter } from "next/navigation";
-import CardActionIcon from "./CardActionIcon";
-import { useEffect, useState } from "react";
-import {
-  useAddToFavourite,
-  useDeleteRecipe,
-  useRemoveFromFavourite,
-} from "@/lib/queries/recipe.queries";
+
 import { Favourite } from "@/types/favourite";
-import { useConfirmStore } from "@/store/confirm.store";
 import Image from "../common/Image";
+import RecipeOptions from "../shared/RecipeOptions";
 
-export default function RecipeCard({
-  recipe,
-  favourites = [],
-}: {
-  recipe: Recipe;
-  favourites: Favourite[];
-}) {
+export default function RecipeCard({ recipe }: { recipe: Recipe }) {
   const router = useRouter();
-  const { user } = useAuthStore();
-  const { mutate: addToFavourite } = useAddToFavourite();
-  const { mutate: removeFromFavourite } = useRemoveFromFavourite();
-  const { mutate: deleteRecipe } = useDeleteRecipe();
-  const [isLiked, setIsLiked] = useState(false);
-  const { showConfirm } = useConfirmStore();
 
-  useEffect(() => {
-    const isFavourite = favourites?.some((item) => item.recipeId === recipe.id);
-    setIsLiked(isFavourite);
-  }, [favourites]);
-
-  const handleFavouriteClick = () => {
-    if (isLiked)
-      removeFromFavourite(
-        { recipeId: recipe.id },
-        {
-          onSuccess: () => {
-            setIsLiked(false);
-          },
-        },
-      );
-    else
-      addToFavourite(
-        { recipeId: recipe.id },
-        {
-          onSuccess: () => {
-            setIsLiked(true);
-          },
-        },
-      );
-  };
-
-  const handleUpdateClick = () => {
-    router.push(`${routes.private.updateRecipe}/${recipe.id}`);
-  };
-
-  const handleDeleteClick = () => {
-    showConfirm({
-      show: true,
-      title: "Delete Recipe",
-      body: "Are you sure you want to delete this recipe?",
-      onConfirm: () => {
-        deleteRecipe(
-          { recipeId: recipe.id },
-          {
-            onSuccess: () => router.refresh(),
-          },
-        );
-      },
-    });
-  };
   return (
     <div
       className="h-full flex flex-col max-w-[300px] gap-3 rounded-xl overflow-hidden cursor-pointer"
@@ -94,32 +30,8 @@ export default function RecipeCard({
               : parseFloat(recipe.rating).toFixed(1)}
           </span>
         </div>
-        <div className="absolute top-3 right-3 flex flex-col gap-3">
-          <CardActionIcon
-            icon={
-              <Heart
-                size={22}
-                color="var(--color-primary)"
-                fill={isLiked ? "var(--color-primary)" : "white"}
-              />
-            }
-            handleClick={handleFavouriteClick}
-          />
-          {user?.id === recipe.userId && (
-            <CardActionIcon
-              icon={<Pen size={22} color="var(--color-primary)" fill="white" />}
-              handleClick={handleUpdateClick}
-            />
-          )}
-
-          {user?.id === recipe.userId && (
-            <CardActionIcon
-              icon={
-                <Trash2 size={22} color="var(--color-primary)" fill="white" />
-              }
-              handleClick={handleDeleteClick}
-            />
-          )}
+        <div className="absolute top-3 right-3">
+          <RecipeOptions recipe={recipe} />
         </div>
       </div>
       <div className="flex flex-wrap gap-2 mt-2">

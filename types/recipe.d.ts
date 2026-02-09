@@ -21,6 +21,7 @@ export interface Recipe {
   ingredients: RecipeIngredients[];
   steps: RecipeSteps[];
   user: User;
+  isFavourite: boolean;
 }
 
 export interface CreateRecipeBody {

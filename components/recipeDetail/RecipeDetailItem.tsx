@@ -13,7 +13,7 @@ const RecipeDetailItem = ({
       <p className="text-muted-foreground text-sm">{description}</p>
       <span className="flex items-center gap-2">
         {icon}
-        <span className="text-sm font-semibold">{data}</span>
+        <span className="text-lg font-semibold">{data}</span>
       </span>
     </div>
   );

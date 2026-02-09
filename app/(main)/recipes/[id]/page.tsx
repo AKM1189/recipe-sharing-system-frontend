@@ -19,6 +19,7 @@ import ReviewList from "@/components/recipeDetail/Reviews/ReviewList";
 import RatingOverview from "@/components/recipeDetail/Rating/RatingOverview";
 import Image from "@/components/common/Image";
 import ProfileAvatar from "@/components/common/ProfileAvatar";
+import RecipeAuthor from "@/components/recipeDetail/RecipeAuthor";
 
 type PageProps = {
   params: { id: string };
@@ -29,7 +30,6 @@ export default async function RecipePage({ params }: PageProps) {
   const { data: recipe }: { data: Recipe } = await serverFetch(
     `${endpoints.recipe}/${id}`,
   );
-  console.log("by id", recipe);
   if (recipe)
     return (
       <div className="px-20">
@@ -42,7 +42,7 @@ export default async function RecipePage({ params }: PageProps) {
                 alt={recipe.title}
               />
             )}
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-3 min-w-[300px] w-full">
               <div className="flex gap-5">
                 {recipe?.categories?.map((category) => (
                   <p
@@ -57,21 +57,21 @@ export default async function RecipePage({ params }: PageProps) {
               <div className="flex gap-20 flex-wrap mt-5">
                 <RecipeDetailItem
                   icon={
-                    <Clock color="var(--color-muted-foreground)" size={18} />
+                    <Clock color="var(--color-muted-foreground)" size={24} />
                   }
                   data={`${recipe?.cookingTime} min`}
                   description="Cooking Time"
                 />
                 <RecipeDetailItem
                   icon={
-                    <Utensils color="var(--color-muted-foreground)" size={18} />
+                    <Utensils color="var(--color-muted-foreground)" size={24} />
                   }
                   data={`Serves ${recipe?.serving}`}
                   description="Serving"
                 />
                 <RecipeDetailItem
                   icon={
-                    <ChefHat color="var(--color-muted-foreground)" size={18} />
+                    <ChefHat color="var(--color-muted-foreground)" size={24} />
                   }
                   data={`${recipe.difficulty}`}
                   description="Difficulty Level"
@@ -80,15 +80,7 @@ export default async function RecipePage({ params }: PageProps) {
 
               {/* author */}
 
-              <div className="flex items-center gap-5 mt-10 pb-10 border-b">
-                <ProfileAvatar profileUrl={recipe.user.profileUrl} size={16} />
-                <div>
-                  <h2 className="text-lg font-semibold">
-                    {formatLowerCaseName(recipe.user.name)}
-                  </h2>
-                  <p className="text-sm text-muted-foreground">Recipe Author</p>
-                </div>
-              </div>
+              <RecipeAuthor recipe={recipe} />
 
               <div>
                 <p className="mt-4">{recipe.description}</p>
