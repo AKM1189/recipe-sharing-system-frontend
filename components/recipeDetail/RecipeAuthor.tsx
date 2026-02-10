@@ -20,7 +20,7 @@ const RecipeAuthor: React.FC<RecipeAuthorType> = ({ recipe }) => {
           <p className="text-sm text-muted-foreground">Recipe Author</p>
         </div>
       </div>
-      <RecipeOptions recipe={recipe} align="horizontal" />
+      <RecipeOptions recipe={recipe} align="horizontal" isDetail={true} />
     </div>
   );
 };

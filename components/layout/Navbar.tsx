@@ -27,6 +27,7 @@ import ProfileAvatar from "../common/ProfileAvatar";
 import { useAuthStore } from "@/store/auth.store";
 import { cn } from "@/lib/utils";
 import { TbLogout } from "react-icons/tb";
+import Image from "next/image";
 
 const menus = [
   { label: "Home", href: routes.public.home },
@@ -40,7 +41,10 @@ export function Navbar() {
 
   return (
     <div className="flex justify-between items-center h-20">
-      <h2 className="text-2xl text-primary font-extrabold">Recipe</h2>
+      <div className="flex items-center gap-2">
+        <Image alt="Recipixa" width={40} height={40} src={"/recipe_logo.png"} />
+        <h2 className="text-2xl text-primary font-extrabold">Recipixa</h2>
+      </div>
 
       <div className="flex items-center gap-10">
         <NavigationMenu

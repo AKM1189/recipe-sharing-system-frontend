@@ -20,10 +20,29 @@ import RatingOverview from "@/components/recipeDetail/Rating/RatingOverview";
 import Image from "@/components/common/Image";
 import ProfileAvatar from "@/components/common/ProfileAvatar";
 import RecipeAuthor from "@/components/recipeDetail/RecipeAuthor";
+import ShareRecipe from "@/components/recipeDetail/ShareRecipe";
 
 type PageProps = {
   params: { id: string };
 };
+
+export async function generateMetadata({ params }: PageProps) {
+  const { id } = await params;
+  const { data: recipe }: { data: Recipe } = await serverFetch(
+    `${endpoints.recipe}/${id}`,
+  );
+
+  return {
+    title: recipe.title,
+    description: recipe.description,
+    openGraph: {
+      title: recipe.title,
+      description: recipe.description,
+      images: [recipe.imageUrl],
+      url: `https://recipixa.vercel.app/recipes/${recipe.id}`,
+    },
+  };
+}
 
 export default async function RecipePage({ params }: PageProps) {
   const { id } = await params;
@@ -179,6 +198,11 @@ export default async function RecipePage({ params }: PageProps) {
               />
             </div>
           </div>
+        </div>
+
+        {/* Share */}
+        <div className="mt-10">
+          <ShareRecipe recipe={recipe} />
         </div>
 
         {/* Rating */}

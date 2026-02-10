@@ -1,5 +1,5 @@
 export const constants = {
-  title: "Recipes",
+  title: "Recipixa",
 };
 
 export const authConstants = {
