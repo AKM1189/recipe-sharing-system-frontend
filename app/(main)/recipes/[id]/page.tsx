@@ -201,7 +201,7 @@ export default async function RecipePage({ params }: PageProps) {
         </div>
 
         {/* Share */}
-        <div className="mt-10">
+        <div className="mt-20">
           <ShareRecipe recipe={recipe} />
         </div>
 

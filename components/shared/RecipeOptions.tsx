@@ -25,6 +25,7 @@ import { Recipe } from "@/types";
 import { Favourite } from "@/types/favourite";
 import { useReactToPrint } from "react-to-print";
 import PrintRecipe from "../recipeDetail/PrintRecipe";
+import ShareRecipePopover from "../recipeDetail/ShareRecipePopover";
 
 const RecipeOptions = ({
   recipe,
@@ -121,6 +122,7 @@ const RecipeOptions = ({
             icon={<Printer size={22} color="var(--color-primary)" />}
             handleClick={handlePrintClick}
           />
+          <ShareRecipePopover recipe={recipe} />
         </>
       )}
 

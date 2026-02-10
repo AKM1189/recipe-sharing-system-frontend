@@ -36,9 +36,9 @@ export const getImageUrl = (key: string | undefined) => {
   return process.env.NEXT_PUBLIC_IMAGE_URL + key;
 };
 
-export const formatLowerCaseName = (category: string) => {
-  const arr = category.split(" ");
+export const formatLowerCaseName = (text: string) => {
+  const arr = text.split(" ");
   if (arr.length > 0) {
     return arr.map((item) => `${item[0].toUpperCase()}${item.slice(1)}`);
-  } else category[0].toUpperCase() + category.slice(1);
+  } else text[0].toUpperCase() + text.slice(1);
 };

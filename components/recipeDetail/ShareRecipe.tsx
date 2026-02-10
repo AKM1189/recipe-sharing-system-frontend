@@ -37,7 +37,7 @@ const ShareRecipe = ({ recipe }: { recipe: Recipe }) => {
   };
   return (
     <div>
-      <h2 className="text-sm font-medium">Share this on</h2>
+      <h2 className=" font-medium">Share this recipe on</h2>
       <div className="flex gap-2 mt-2">
         <CardActionIcon
           tooltip="Facebook"
