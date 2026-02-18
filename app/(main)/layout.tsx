@@ -12,12 +12,12 @@ export default function MainLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div>
+    <div className="min-w-[400px] overflow-auto">
       <AuthProvider>
         <div className="mx-5 sm:mx-10 md:mx-10">
           <Navbar />
         </div>
-        <section className="mx-20">{children}</section>
+        <section className="mx-5 sm:mx-10 md:mx-20">{children}</section>
         <div>
           <PopularTags />
         </div>

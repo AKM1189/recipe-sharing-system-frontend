@@ -28,39 +28,40 @@ type PageProps = {
 
 export async function generateMetadata({ params }: PageProps) {
   const { id } = await params;
-  const { data: recipe }: { data: Recipe } = await serverFetch(
-    `${endpoints.recipe}/${id}`,
-  );
+  const { data: recipe }: { data: Recipe | null; error?: string | undefined } =
+    await serverFetch(`${endpoints.recipe}/${id}`);
 
-  return {
-    title: recipe.title,
-    description: recipe.description,
-    openGraph: {
+  if (recipe)
+    return {
       title: recipe.title,
       description: recipe.description,
-      images: [recipe.imageUrl],
-      url: `https://recipixa.vercel.app/recipes/${recipe.id}`,
-    },
-  };
+      openGraph: {
+        title: recipe.title,
+        description: recipe.description,
+        images: [recipe.imageUrl],
+        url: `https://recipixa.vercel.app/recipes/${recipe.id}`,
+      },
+    };
 }
 
 export default async function RecipePage({ params }: PageProps) {
   const { id } = await params;
-  const { data: recipe }: { data: Recipe } = await serverFetch(
-    `${endpoints.recipe}/${id}`,
-  );
+  const { data: recipe }: { data: Recipe | null; error?: string | undefined } =
+    await serverFetch(`${endpoints.recipe}/${id}`);
   if (recipe)
     return (
       <div className="px-20">
         <div className="mt-20">
-          <div className="flex gap-20">
-            {recipe?.imageUrl && (
-              <Image
-                className="rounded-lg h-[500px] min-w-[350px] max-w-[500px] object-cover bg-gray-200"
-                publicId={recipe.imageUrl}
-                alt={recipe.title}
-              />
-            )}
+          <div className="flex max-lg:flex-col gap-20">
+            <div className="flex justify-center">
+              {recipe?.imageUrl && (
+                <Image
+                  className="rounded-lg h-[500px] min-w-[350px] max-w-[500px] object-cover bg-gray-200"
+                  publicId={recipe.imageUrl}
+                  alt={recipe.title}
+                />
+              )}
+            </div>
             <div className="flex flex-col gap-3 min-w-[300px] w-full">
               <div className="flex gap-5">
                 {recipe?.categories?.map((category) => (
@@ -73,7 +74,7 @@ export default async function RecipePage({ params }: PageProps) {
                 ))}
               </div>
               <h1 className="text-3xl font-bold">{recipe?.title}</h1>
-              <div className="flex gap-20 flex-wrap mt-5">
+              <div className="flex gap-x-20 gap-y-10 flex-wrap mt-5">
                 <RecipeDetailItem
                   icon={
                     <Clock color="var(--color-muted-foreground)" size={24} />
@@ -198,11 +199,6 @@ export default async function RecipePage({ params }: PageProps) {
               />
             </div>
           </div>
-        </div>
-
-        {/* Share */}
-        <div className="mt-20">
-          <ShareRecipe recipe={recipe} />
         </div>
 
         {/* Rating */}

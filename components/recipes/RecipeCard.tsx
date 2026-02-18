@@ -14,7 +14,7 @@ export default function RecipeCard({ recipe }: { recipe: Recipe }) {
 
   return (
     <div
-      className="h-full flex flex-col max-w-[300px] gap-3 rounded-xl overflow-hidden cursor-pointer"
+      className="h-full flex flex-col w-full md:max-w-[300px] gap-3 rounded-xl overflow-hidden cursor-pointer"
       onClick={() => router.push(`${routes.public.recipes}/${recipe.id}`)}
     >
       <div className="relative bg-gray-200 rounded-lg">

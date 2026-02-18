@@ -39,6 +39,6 @@ export const getImageUrl = (key: string | undefined) => {
 export const formatLowerCaseName = (text: string) => {
   const arr = text.split(" ");
   if (arr.length > 0) {
-    return arr.map((item) => `${item[0].toUpperCase()}${item.slice(1)}`);
+    return arr.map((item) => `${item[0].toUpperCase()}${item.slice(1)} `);
   } else text[0].toUpperCase() + text.slice(1);
 };

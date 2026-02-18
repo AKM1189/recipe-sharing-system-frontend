@@ -4,7 +4,8 @@ import Link from "next/link";
 import { twMerge } from "tailwind-merge";
 
 interface Categories {
-  data: Category[];
+  data: Category[] | null;
+  error?: string | undefined;
 }
 
 const Categories = ({

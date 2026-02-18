@@ -6,7 +6,7 @@ const RecipesGrid = ({ recipes }: { recipes: Recipe[] }) => {
   return (
     <div
       // className="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-6"
-      className="flex flex-wrap gap-6"
+      className="flex flex-wrap gap-6 max-sm:justify-center"
     >
       {recipes.map((recipe) => (
         <RecipeCard key={recipe.id} recipe={recipe} />

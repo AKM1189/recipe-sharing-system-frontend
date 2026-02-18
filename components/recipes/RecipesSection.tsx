@@ -9,7 +9,7 @@ const RecipesSection = ({
 }: {
   title: string;
   description: string;
-  recipes: Recipe[];
+  recipes: Recipe[] | null;
 }) => {
   return (
     <div className="relative mt-20 flex flex-col items-center">

@@ -32,14 +32,16 @@ export default async function PopularTags() {
     "HEALTHY",
     "MEAT",
   ];
-  const categories: { data: Category[]; error: string | undefined } =
+  const categories: { data: Category[] | null; error?: string | undefined } =
     await serverFetch(endpoints.category);
   return (
     <div className="mt-28">
       <div className="min-h-[100px] py-20 px-5 bg-secondary flex flex-col justify-center items-center">
         <div className="text-center max-w-[1000px] mx-auto">
-          <h1 className="text-5xl font-bold">Explore Popular Tags</h1>
-          <p className="leading-6 mt-3 text-muted-foreground">
+          <h1 className="md:text-5xl text-3xl font-bold">
+            Explore Popular Tags
+          </h1>
+          <p className="leading-6 mt-3 sm:mt-5 text-muted-foreground">
             From quick meals to healthy dishes, our popular tags make it easy to
             explore delicious options with one click.
           </p>
