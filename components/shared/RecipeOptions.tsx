@@ -9,16 +9,7 @@ import {
 } from "@/lib/queries/recipe.queries";
 import { useConfirmStore } from "@/store/confirm.store";
 import CardActionIcon from "../recipes/CardActionIcon";
-import {
-  Clock,
-  Heart,
-  Pen,
-  Printer,
-  Share,
-  Star,
-  Trash2,
-  Utensils,
-} from "lucide-react";
+import { Heart, Pen, Printer, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { routes } from "@/lib/routes";
 import { Recipe } from "@/types";

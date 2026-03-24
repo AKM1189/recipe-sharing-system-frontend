@@ -8,8 +8,8 @@ import RecipeSearchBar from "@/components/shared/RecipeSearchBar";
 import { constants } from "@/lib/constants";
 
 export default async function Home() {
-  const recipes: { data: Recipe[] | null; error?: string | undefined } =
-    await serverFetch(endpoints.recipe);
+  // const recipes: { data: Recipe[] | null; error?: string | undefined } =
+  //   await serverFetch(endpoints.recipe, { page: 2 });
   const categories: { data: Category[] | null; error?: string | undefined } =
     await serverFetch(endpoints.category);
   // const categories = [
@@ -30,14 +30,14 @@ export default async function Home() {
   //   "HEALTHY",
   //   "MEAT",
   // ];
-  if (recipes.error === "SERVER_UNREACHABLE") {
-    return (
-      <ErrorState
-        title="Service temporarily unavailable"
-        message="We can’t connect to the server right now. Please try again later."
-      />
-    );
-  }
+  // if (recipes.error === "SERVER_UNREACHABLE") {
+  //   return (
+  //     <ErrorState
+  //       title="Service temporarily unavailable"
+  //       message="We can’t connect to the server right now. Please try again later."
+  //     />
+  //   );
+  // }
 
   return (
     <div>
@@ -57,7 +57,7 @@ export default async function Home() {
         title="New Recipes"
         description="Explore our latest recipes, from quick snacks to hearty meals and
         indulgent desserts."
-        recipes={recipes.data}
+        // recipes={recipes.data}
       />
     </div>
   );

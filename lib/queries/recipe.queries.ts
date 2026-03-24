@@ -14,10 +14,15 @@ import {
 } from "../api/recipe.api";
 import { errorToast, successToast } from "../handleToast";
 
-export const useGetRecipes = (query: string) => {
+export const useGetRecipes = (
+  query?: string,
+  pagination?: { page: number; limit: number },
+) => {
   return useQuery({
     queryKey: ["recipes"],
-    queryFn: () => getRecipes(query),
+    queryFn: () => getRecipes(query, pagination),
+    staleTime: 5000,
+    refetchOnWindowFocus: false,
   });
 };
 

@@ -16,7 +16,10 @@ const CardActionIcon = forwardRef<
           <button
             ref={ref}
             className="w-10 h-10 bg-white shadow-md rounded-full flex justify-center items-center"
-            onClick={handleClick}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleClick();
+            }}
           >
             {icon}
           </button>

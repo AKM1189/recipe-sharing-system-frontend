@@ -13,8 +13,8 @@ export default async function Recipes({
   searchParams: Promise<{ query: string }>;
 }) {
   const { query } = await searchParams;
-  const recipes: { data: Recipe[] | null; error?: string | undefined } =
-    await serverFetch(`${endpoints.recipe}?query=${query ? query : ""}`);
+  // const recipes: { data: Recipe[] | null; error?: string | undefined } =
+  //   await serverFetch(`${endpoints.recipe}`, { query });
   return (
     <div className="relative mt-20 flex flex-col items-center w-full">
       <RecipeSearchBar
@@ -50,7 +50,7 @@ export default async function Recipes({
       </div> */}
 
       <div className=" w-full">
-        <RecipesSection title="" description="" recipes={recipes.data} />
+        <RecipesSection title="" description="" searchQuery={query} />
       </div>
     </div>
   );

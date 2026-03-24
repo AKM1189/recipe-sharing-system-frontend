@@ -2,10 +2,14 @@ import { CreateRecipeBody, UpdateRecipeBody } from "@/types";
 import { endpoints } from "../endpoints";
 import { api } from "./apiConfig";
 
-export const getRecipes = async (query: string = "") => {
+export const getRecipes = async (
+  query: string = "",
+  pagination?: { page: number; limit: number },
+) => {
   const response = await api.get(endpoints.recipe, {
     params: {
       query,
+      ...pagination,
     },
   });
   return response.data;
