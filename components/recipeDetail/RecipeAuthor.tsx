@@ -10,17 +10,17 @@ import RecipeOptions from "../shared/RecipeOptions";
 type RecipeAuthorType = { recipe: Recipe };
 const RecipeAuthor: React.FC<RecipeAuthorType> = ({ recipe }) => {
   return (
-    <div className="flex justify-between items-center border-b">
+    <div className="flex flex-wrap justify-between items-center">
       <div className="flex items-center gap-5 mt-10 pb-7">
         <ProfileAvatar profileUrl={recipe.user.profileUrl} size={16} />
         <div>
-          <h2 className="text-lg font-semibold">
+          <h2 className="text-lg font-semibold max-w-[200px] truncate">
             {formatLowerCaseName(recipe.user.name)}
           </h2>
           <p className="text-sm text-muted-foreground">Recipe Author</p>
         </div>
       </div>
-      <RecipeOptions recipe={recipe} align="horizontal" />
+      <RecipeOptions recipe={recipe} align="horizontal" isDetail={true} />
     </div>
   );
 };

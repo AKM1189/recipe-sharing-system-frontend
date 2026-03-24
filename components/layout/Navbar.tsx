@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { LogIn } from "lucide-react";
+import { LogIn, Menu } from "lucide-react";
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -27,6 +27,13 @@ import ProfileAvatar from "../common/ProfileAvatar";
 import { useAuthStore } from "@/store/auth.store";
 import { cn } from "@/lib/utils";
 import { TbLogout } from "react-icons/tb";
+import Image from "next/image";
+import { useEffect, useState } from "react";
+
+export type MenuType = {
+  label: string;
+  href: string;
+};
 
 const menus = [
   { label: "Home", href: routes.public.home },
@@ -35,12 +42,21 @@ const menus = [
 ];
 
 export function Navbar() {
+  const [isNavOpen, setNavOpen] = useState(false);
+
   const isMobile = useIsMobile();
   const pathname = usePathname();
 
+  useEffect(() => {
+    setNavOpen(false);
+  }, [pathname]);
+
   return (
     <div className="flex justify-between items-center h-20">
-      <h2 className="text-2xl text-primary font-extrabold">Recipe</h2>
+      <div className="flex items-center gap-2">
+        <Image alt="Recipixa" width={40} height={40} src={"/recipe_logo.png"} />
+        <h2 className="text-2xl text-primary font-extrabold">Recipixa</h2>
+      </div>
 
       <div className="flex items-center gap-10">
         <NavigationMenu
@@ -67,7 +83,7 @@ export function Navbar() {
 
         <div className="flex gap-8 items-center">
           <div className="lg:hidden">
-            <NavbarDialog />
+            <NavbarDialog menus={menus} />
           </div>
           <Profile pathname={pathname} />
         </div>

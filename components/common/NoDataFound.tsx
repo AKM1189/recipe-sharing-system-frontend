@@ -2,7 +2,7 @@ const NoDataFound = ({
   data,
   message = "No Data Found!",
 }: {
-  data: any[];
+  data: any[] | null;
   message?: string;
 }) => {
   if (!data || data?.length === 0)

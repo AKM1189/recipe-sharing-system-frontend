@@ -1,4 +1,5 @@
 import RecipesSection from "@/components/recipes/RecipesSection";
+import RecipeSearchBar from "@/components/shared/RecipeSearchBar";
 import { Input } from "@/components/ui/input";
 import { serverFetch } from "@/lib/api/server-api";
 import { endpoints } from "@/lib/endpoints";
@@ -12,11 +13,15 @@ export default async function Recipes({
   searchParams: Promise<{ query: string }>;
 }) {
   const { query } = await searchParams;
-  const recipes: { data: Recipe[]; error: string | undefined } =
-    await serverFetch(`${endpoints.recipe}?query=${query}`);
+  // const recipes: { data: Recipe[] | null; error?: string | undefined } =
+  //   await serverFetch(`${endpoints.recipe}`, { query });
   return (
     <div className="relative mt-20 flex flex-col items-center w-full">
-      <h1 className="text-5xl font-bold mb-5">All Recipes</h1>
+      <RecipeSearchBar
+        title={"All Recipe"}
+        description="Discover a wide range of delicious recipes. Browse by category, explore new ideas, or use AI-powered search to find the perfect recipe for any occasion."
+      />
+      {/* <h1 className="text-5xl font-bold mb-5">All Recipes</h1>
       <p className="max-w-[800px] text-center leading-8">
         Discover a wide range of delicious recipes. Browse by category, explore
         new ideas, or use AI-powered search to find the perfect recipe for any
@@ -42,10 +47,10 @@ export default async function Recipes({
             </button>
           </div>
         </Form>
-      </div>
+      </div> */}
 
       <div className=" w-full">
-        <RecipesSection title="" description="" recipes={recipes.data} />
+        <RecipesSection title="" description="" searchQuery={query} />
       </div>
     </div>
   );

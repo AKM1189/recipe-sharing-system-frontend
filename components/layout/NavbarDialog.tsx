@@ -20,39 +20,55 @@ import {
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
 import { routes } from "@/lib/routes";
-import { Menu } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import Link from "next/link";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "../ui/accordion";
+import { useEffect, useState } from "react";
+import { twMerge } from "tailwind-merge";
+import { MenuType } from "./Navbar";
+import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
 
-export function NavbarDialog() {
+export function NavbarDialog({ menus }: { menus: MenuType[] }) {
+  const [open, setOpen] = useState(false);
+  const pathname = usePathname();
+
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
   return (
-    <Dialog>
-      <DialogTrigger asChild>
+    <div>
+      <div onClick={() => setOpen(!open)} className="cursor-pointer">
         <Menu />
-      </DialogTrigger>
-      <DialogContent className="flex flex-col justify-center sm:max-w-full h-full rounded-none">
-        <DialogTitle></DialogTitle>
-
-        <div className="flex flex-col justify-center items-center gap-12 [&>*]:font-medium [&>*]:hover:bg-accent [&>*]:px-5 [&>*]:py-2 [&>*]:rounded-md [&>*]:transaction-all [&>*]:duration-300">
-          <Link href={routes.public.home}>
-            <DialogClose>Home</DialogClose>
-          </Link>
-          <Link href={routes.public.recipes}>
-            <DialogClose>Recipes</DialogClose>
-          </Link>
-          <Link href={routes.public.categories}>
-            <DialogClose>Categories</DialogClose>
-          </Link>
-          <Link href={routes.private.addRecipe}>
-            <DialogClose>Add Recipe</DialogClose>
-          </Link>
+      </div>
+      <div
+        className={twMerge(
+          "flex flex-col justify-center sm:max-w-full h-full rounded-none",
+          !open && "hidden",
+        )}
+      >
+        <div className="min-w-[400px] fixed top-0 left-0 bg-background w-full h-full z-100 flex flex-col justify-center items-center gap-12">
+          {menus.map((menu, index) => (
+            <Link
+              href={menu.href}
+              key={index}
+              className={cn(
+                "font-medium text-default hover:text-muted-foreground hover:bg-accent px-5 py-2 rounded-md transaction-all duration-300",
+                pathname === menu.href
+                  ? "text-primary hover:text-primary focus:text-primary"
+                  : "",
+              )}
+            >
+              {menu.label}
+            </Link>
+          ))}
+          <button
+            className="absolute top-10 right-10 cursor-pointer"
+            onClick={() => setOpen(false)}
+          >
+            <X />
+          </button>
         </div>
-      </DialogContent>
-    </Dialog>
+      </div>
+    </div>
   );
 }

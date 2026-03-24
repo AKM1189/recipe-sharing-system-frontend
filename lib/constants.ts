@@ -1,5 +1,5 @@
 export const constants = {
-  title: "Recipes",
+  title: "Recipixa",
 };
 
 export const authConstants = {
@@ -16,4 +16,12 @@ export enum RecipeDifficulty {
 
 export const RESPONSE_ERROR = {
   SERVER_UNREACHABLE: "SERVER_UNREACHABLE",
+};
+
+export const SHARE_MEDIA = {
+  FACEBOOK: "FACEBOOK",
+  PINTEREST: "PINTEREST",
+  TELEGRAM: "TELEGRAM",
+  X: "X",
+  MAIL: "MAIL",
 };

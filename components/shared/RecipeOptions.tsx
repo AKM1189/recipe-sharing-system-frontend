@@ -1,6 +1,6 @@
 import { useAuthStore } from "@/store/auth.store";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   useAddToFavourite,
   useDeleteRecipe,
@@ -9,18 +9,23 @@ import {
 } from "@/lib/queries/recipe.queries";
 import { useConfirmStore } from "@/store/confirm.store";
 import CardActionIcon from "../recipes/CardActionIcon";
-import { Clock, Heart, Pen, Star, Trash2, Utensils } from "lucide-react";
+import { Heart, Pen, Printer, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { routes } from "@/lib/routes";
 import { Recipe } from "@/types";
 import { Favourite } from "@/types/favourite";
+import { useReactToPrint } from "react-to-print";
+import PrintRecipe from "../recipeDetail/PrintRecipe";
+import ShareRecipePopover from "../recipeDetail/ShareRecipePopover";
 
 const RecipeOptions = ({
   recipe,
   align = "vertical",
+  isDetail = false,
 }: {
   recipe: Recipe;
   align?: "horizontal" | "vertical";
+  isDetail?: boolean;
 }) => {
   const router = useRouter();
   const { data: favourites } = useGetFavourites();
@@ -30,6 +35,9 @@ const RecipeOptions = ({
   const { mutate: deleteRecipe } = useDeleteRecipe();
   const [isLiked, setIsLiked] = useState(false);
   const { showConfirm } = useConfirmStore();
+
+  const contentRef = useRef<HTMLDivElement>(null);
+  const reactToPrintFn = useReactToPrint({ contentRef });
 
   useEffect(() => {
     const isFavourite = favourites?.some(
@@ -78,11 +86,16 @@ const RecipeOptions = ({
       },
     });
   };
+  const handlePrintClick = () => {
+    reactToPrintFn();
+  };
+
   return (
     <div
       className={align === "horizontal" ? "flex gap-3" : "flex flex-col gap-3"}
     >
       <CardActionIcon
+        tooltip="Save To Favourites"
         icon={
           <Heart
             size={22}
@@ -92,8 +105,21 @@ const RecipeOptions = ({
         }
         handleClick={handleFavouriteClick}
       />
+
+      {isDetail && (
+        <>
+          <CardActionIcon
+            tooltip="Print"
+            icon={<Printer size={22} color="var(--color-primary)" />}
+            handleClick={handlePrintClick}
+          />
+          <ShareRecipePopover recipe={recipe} />
+        </>
+      )}
+
       {user?.id === recipe.userId && (
         <CardActionIcon
+          tooltip="Edit"
           icon={<Pen size={22} color="var(--color-primary)" fill="white" />}
           handleClick={handleUpdateClick}
         />
@@ -101,10 +127,16 @@ const RecipeOptions = ({
 
       {user?.id === recipe.userId && (
         <CardActionIcon
+          tooltip="Delete"
           icon={<Trash2 size={22} color="var(--color-primary)" fill="white" />}
           handleClick={handleDeleteClick}
         />
       )}
+
+      {/* print content */}
+      <div className="hidden">
+        <PrintRecipe recipe={recipe} ref={contentRef} />
+      </div>
     </div>
   );
 };

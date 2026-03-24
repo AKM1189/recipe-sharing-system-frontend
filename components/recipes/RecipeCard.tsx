@@ -2,10 +2,9 @@
 
 import { routes } from "@/lib/routes";
 import { Recipe } from "@/types";
-import { Clock, Heart, Pen, Star, Trash2, Utensils } from "lucide-react";
+import { Clock, Star, Utensils } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-import { Favourite } from "@/types/favourite";
 import Image from "../common/Image";
 import RecipeOptions from "../shared/RecipeOptions";
 
@@ -14,7 +13,7 @@ export default function RecipeCard({ recipe }: { recipe: Recipe }) {
 
   return (
     <div
-      className="h-full flex flex-col max-w-[300px] gap-3 rounded-xl overflow-hidden cursor-pointer"
+      className="h-full flex flex-col w-full md:max-w-[300px] gap-3 rounded-xl overflow-hidden cursor-pointer"
       onClick={() => router.push(`${routes.public.recipes}/${recipe.id}`)}
     >
       <div className="relative bg-gray-200 rounded-lg">
@@ -34,19 +33,21 @@ export default function RecipeCard({ recipe }: { recipe: Recipe }) {
           <RecipeOptions recipe={recipe} />
         </div>
       </div>
-      <div className="flex flex-wrap gap-2 mt-2">
-        {recipe.categories.map((category) => (
-          <div
-            key={category.category.id}
-            className="text-primary uppercase font-semibold text-sm"
-          >
-            {category.category.name}
-          </div>
-        ))}
+      <div>
+        <div className="flex flex-wrap gap-2 mt-2">
+          {recipe.categories.map((category) => (
+            <div
+              key={category.category.id}
+              className="text-primary uppercase font-semibold text-sm"
+            >
+              {category.category.name}
+            </div>
+          ))}
+        </div>
+        <h1 className="mt-1 text-xl font-semibold hover:text-primary transition-colors duration-200">
+          {recipe.title}
+        </h1>
       </div>
-      <h1 className="text-xl font-semibold hover:text-primary transition-colors duration-200">
-        {recipe.title}
-      </h1>
       <p className="flex items-center gap-5">
         <span className="flex gap-1 items-center">
           <Clock size={16} />

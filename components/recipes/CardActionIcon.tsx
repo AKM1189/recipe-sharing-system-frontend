@@ -1,25 +1,35 @@
-import { ReactNode } from "react";
+import { forwardRef, ReactNode } from "react";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
-const CardActionIcon = ({
-  icon,
-  handleClick,
-}: {
-  icon: ReactNode;
-  handleClick: () => void;
-}) => {
+const CardActionIcon = forwardRef<
+  HTMLButtonElement,
+  {
+    icon: ReactNode;
+    handleClick: () => void;
+    tooltip: string;
+  }
+>(({ icon, handleClick, tooltip }, ref) => {
   return (
     <div>
-      <span
-        className="w-10 h-10 bg-white shadow-md rounded-full flex justify-center items-center"
-        onClick={(e) => {
-          e.stopPropagation();
-          handleClick();
-        }}
-      >
-        {icon}
-      </span>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <button
+            ref={ref}
+            className="w-10 h-10 bg-white shadow-md rounded-full flex justify-center items-center"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleClick();
+            }}
+          >
+            {icon}
+          </button>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>{tooltip}</p>
+        </TooltipContent>
+      </Tooltip>
     </div>
   );
-};
+});
 
 export default CardActionIcon;
