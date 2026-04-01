@@ -1,6 +1,7 @@
 import { RecipeForm } from "@/components/addRecipe/RecipeForm";
 import { serverFetch } from "@/lib/api/server-api";
 import { endpoints } from "@/lib/endpoints";
+import { Recipe } from "@/types";
 
 export default async function UpdateRecipe({
   params,
@@ -8,7 +9,9 @@ export default async function UpdateRecipe({
   params: { id: string };
 }) {
   const { id } = await params;
-  const { data: recipe } = await serverFetch(`${endpoints.recipe}/${id}`);
+  const { data: recipe } = await serverFetch<Recipe>(
+    `${endpoints.recipe}/${id}`,
+  );
   console.log("recipe", recipe);
 
   return (
@@ -21,7 +24,7 @@ export default async function UpdateRecipe({
         </p>
       </div>
       <div className="max-w-[800px] mx-auto">
-        <RecipeForm recipe={recipe} />
+        {recipe ? <RecipeForm recipe={recipe} /> : <p>Recipe not found!</p>}
       </div>
     </div>
   );

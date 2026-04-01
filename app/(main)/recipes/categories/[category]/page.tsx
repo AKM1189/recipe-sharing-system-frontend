@@ -1,8 +1,8 @@
 import RecipesGrid from "@/components/recipes/RecipeGrid";
-import RecipesSection from "@/components/recipes/RecipesSection";
 import { Badge } from "@/components/ui/badge";
 import { serverFetch } from "@/lib/api/server-api";
 import { endpoints } from "@/lib/endpoints";
+import type { Recipe } from "@/types";
 
 export default async function RecipesByCategory({
   params,
@@ -10,7 +10,9 @@ export default async function RecipesByCategory({
   params: Promise<{ category: string }>;
 }) {
   const { category } = await params;
-  const recipes = await serverFetch(`${endpoints.recipe}/category/${category}`);
+  const recipes = await serverFetch<Recipe[]>(
+    `${endpoints.recipe}/category/${category}`,
+  );
   return (
     <div className="mt-10">
       <div className="relative mt-20 flex flex-col items-center">

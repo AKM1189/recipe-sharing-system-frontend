@@ -12,7 +12,6 @@ const FavouriteRecipes = () => {
           title="Favourite Recipes"
           description="Explore our latest recipes, from quick snacks to hearty meals and
         indulgent desserts."
-          recipes={data}
         />
       </div>
     );
