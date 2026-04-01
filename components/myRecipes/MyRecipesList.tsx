@@ -18,7 +18,6 @@ const MyRecipesList = () => {
           title="My Recipes"
           description="Explore our latest recipes, from quick snacks to hearty meals and
         indulgent desserts."
-          recipes={data?.data}
         />
       </div>
     );
