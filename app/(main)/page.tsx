@@ -1,7 +1,6 @@
 import RecipesGrid from "@/components/recipes/RecipeGrid";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { dummyRecipes } from "@/data";
 import { serverFetch } from "@/lib/api/server-api";
 import { constants } from "@/lib/constants";
 import { endpoints } from "@/lib/endpoints";

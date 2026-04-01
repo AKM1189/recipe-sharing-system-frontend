@@ -8,7 +8,7 @@ export interface Recipe {
   imageUrl: string;
   cookingTime: number;
   serving: number;
-  difficulty: RecipeDifficulty;
+  difficulty: string;
   categories: RecipeCategory[];
   createdAt: string;
   updatedAt?: string;
@@ -26,7 +26,7 @@ export interface CreateRecipeBody {
   recipeImage?: File | undefined;
   cookingTime: number;
   serving: number;
-  difficulty: RecipeDifficulty;
+  difficulty: string;
   categories: string[];
   steps: RecipeSteps[];
   ingredients: RecipeIngredients[];
