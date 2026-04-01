@@ -2,6 +2,9 @@ import { Navbar } from "@/components/layout/Navbar";
 import PopularTags from "./popularTags";
 import Footer from "./footer";
 import AuthProvider from "../providers/auth.provider";
+import LoginModal from "@/components/common/LoginModal";
+import ConfirmPopup from "@/components/common/ConfirmPopup";
+import Loading from "@/components/common/Loading";
 
 export default function MainLayout({
   children,
@@ -9,16 +12,19 @@ export default function MainLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div>
+    <div className="min-w-[400px] overflow-auto">
       <AuthProvider>
-        <div className="mx-5 sm:mx-10 md:mx-20">
+        <div className="mx-5 sm:mx-10 md:mx-10">
           <Navbar />
         </div>
-        <section>{children}</section>
+        <section className="mx-5 sm:mx-10 md:mx-20">{children}</section>
         <div>
           <PopularTags />
         </div>
         <Footer />
+        <LoginModal />
+        <ConfirmPopup />
+        <Loading />
       </AuthProvider>
     </div>
   );

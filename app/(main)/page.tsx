@@ -1,79 +1,64 @@
-import RecipesGrid from "@/components/recipes/RecipeGrid";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
+import { ErrorState } from "@/components/common/ErrorState";
 import { serverFetch } from "@/lib/api/server-api";
-import { constants } from "@/lib/constants";
 import { endpoints } from "@/lib/endpoints";
-import { Search, Utensils } from "lucide-react";
+import { Category, Recipe } from "@/types";
+import RecipesSection from "@/components/recipes/RecipesSection";
+import Categories from "@/components/categories/Categories";
+import RecipeSearchBar from "@/components/shared/RecipeSearchBar";
+import { constants } from "@/lib/constants";
 
 export default async function Home() {
-  const { data: recipes } = await serverFetch(endpoints.recipe);
-
-  console.log("recipes", recipes);
-  const categories = [
-    "APPETIZERS",
-    "DRINKS",
-    "DESSERTS",
-    "SNACKS",
-    "BREADS",
-    "BREAKFASTS",
-    "HEALTHY",
-    "MEAT",
-    "APPETIZERS",
-    "DRINKS",
-    "DESSERTS",
-    "SNACKS",
-    "BREADS",
-    "BREAKFASTS",
-    "HEALTHY",
-    "MEAT",
-  ];
+  // const recipes: { data: Recipe[] | null; error?: string | undefined } =
+  //   await serverFetch(endpoints.recipe, { page: 2 });
+  const categories: { data: Category[] | null; error?: string | undefined } =
+    await serverFetch(endpoints.category);
+  // const categories = [
+  //   "APPETIZERS",
+  //   "DRINKS",
+  //   "DESSERTS",
+  //   "SNACKS",
+  //   "BREADS",
+  //   "BREAKFASTS",
+  //   "HEALTHY",
+  //   "MEAT",
+  //   "APPETIZERS",
+  //   "DRINKS",
+  //   "DESSERTS",
+  //   "SNACKS",
+  //   "BREADS",
+  //   "BREAKFASTS",
+  //   "HEALTHY",
+  //   "MEAT",
+  // ];
+  // if (recipes.error === "SERVER_UNREACHABLE") {
+  //   return (
+  //     <ErrorState
+  //       title="Service temporarily unavailable"
+  //       message="We can’t connect to the server right now. Please try again later."
+  //     />
+  //   );
+  // }
 
   return (
-    <div className="mx-20">
+    <div>
       <div className="h-[calc(100vh-80px)] flex flex-col justify-center items-center">
-        <div className="text-center max-w-[700px] mx-auto">
-          <h1 className="text-5xl font-bold">{constants.title}</h1>
-          <p className="leading-6 mt-3">
-            Explore and share daily cooking ideas with our recipes. Discover
-            dishes, videos, tips, and inspiration tailored to your tastes and
-            the community you connect with.
-          </p>
-        </div>
+        <RecipeSearchBar
+          title={constants.title}
+          description={
+            "Explore and share daily cooking ideas with our recipes. Discover dishes, videos, tips, and inspiration tailored to your tastes and the community you connect with."
+          }
+        />
 
-        <div className="relative w-[600px] mt-16 flex items-center">
-          <div className="absolute left-5">
-            <Utensils color="var(--color-primary)" />
-          </div>
-          <Input
-            placeholder="Find recipes to cook today"
-            className="ps-16 bg-white! focus:outline-0! focus:ring-0! h-14 text-[16px]! shadow-md rounded-full"
-          />
-          <div className="absolute right-2 w-10 h-10 rounded-full bg-primary flex justify-center items-center">
-            <Search color="#ffffff" className="w-6 h-6" />
-          </div>
-        </div>
-
-        <div className="mt-16 flex flex-wrap justify-center gap-x-2 gap-y-4 max-w-[1000px]">
-          {categories.map((category, index) => (
-            <a href={`/recipes/categories/${category}`} key={index}>
-              <Badge className="text-sm px-4 py-2.5">{category}</Badge>
-            </a>
-          ))}
-        </div>
+        {categories && <Categories categories={categories} />}
       </div>
 
       {/* recipes list */}
-      <div className="relative mt-20 flex flex-col items-center">
-        <h1 className="text-5xl font-bold mb-5">New Recipes</h1>
-        <p className="mb-14">
-          Explore our latest recipes, from quick snacks to hearty meals and
-          indulgent desserts.
-        </p>
-        <div className="min-w-0 w-full">
-          {Array.isArray(recipes) && <RecipesGrid recipes={recipes} />}
-        </div>
-      </div>
+      <RecipesSection
+        title="New Recipes"
+        description="Explore our latest recipes, from quick snacks to hearty meals and
+        indulgent desserts."
+        // recipes={recipes.data}
+      />
     </div>
   );
 }

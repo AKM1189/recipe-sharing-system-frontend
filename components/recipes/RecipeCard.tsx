@@ -1,58 +1,53 @@
 "use client";
 
 import { routes } from "@/lib/routes";
-import { useAuthStore } from "@/store/auth.store";
 import { Recipe } from "@/types";
-import { Clock, Edit, Pen, Utensils } from "lucide-react";
-import Image from "next/image";
+import { Clock, Star, Utensils } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-export default function RecipeCard({
-  key,
-  recipe,
-}: {
-  key: number;
-  recipe: Recipe;
-}) {
+import Image from "../common/Image";
+import RecipeOptions from "../shared/RecipeOptions";
+
+export default function RecipeCard({ recipe }: { recipe: Recipe }) {
   const router = useRouter();
-  const { user } = useAuthStore();
+
   return (
     <div
-      key={key}
-      className="h-full flex flex-col max-w-[300px] gap-3 rounded-xl overflow-hidden cursor-pointer"
+      className="h-full flex flex-col w-full md:max-w-[300px] gap-3 rounded-xl overflow-hidden cursor-pointer"
       onClick={() => router.push(`${routes.public.recipes}/${recipe.id}`)}
     >
-      <div className="relative">
-        <img
-          className="aspect-[1/1] w-full min-w-[300px] h-auto min-h-[400px] rounded-lg"
-          src={process.env.NEXT_PUBLIC_IMAGE_URL + recipe.imageUrl}
-          alt={recipe.title}
+      <div className="relative bg-gray-200 rounded-lg">
+        <Image
+          publicId={recipe.imageUrl}
+          className="aspect-square w-full min-w-[300px] h-auto min-h-[400px] rounded-lg object-cover"
         />
-        {user?.id === recipe.userId && (
-          <span
-            className="absolute top-5 right-3 w-8 h-8 bg-white shadow-md rounded-full flex justify-center items-center"
-            onClick={(e) => {
-              e.stopPropagation();
-              router.push(`${routes.private.updateRecipe}/${recipe.id}`);
-            }}
-          >
-            <Pen size={16} color="var(--color-primary)" />
+        <div className="absolute top-3 left-3 flex items-center gap-2 bg-white py-1.5 px-3 rounded-full">
+          <Star fill="orange" color="orange" size={18} />{" "}
+          <span className="text-sm font-semibold">
+            {parseInt(recipe.rating) === 0
+              ? "N/A"
+              : parseFloat(recipe.rating).toFixed(1)}
           </span>
-        )}
+        </div>
+        <div className="absolute top-3 right-3">
+          <RecipeOptions recipe={recipe} />
+        </div>
       </div>
-      <div className="flex flex-wrap gap-2 mt-2">
-        {recipe.categories.map((category) => (
-          <div
-            key={category.category.id}
-            className="text-primary uppercase font-semibold text-sm"
-          >
-            {category.category.name}
-          </div>
-        ))}
+      <div>
+        <div className="flex flex-wrap gap-2 mt-2">
+          {recipe.categories.map((category) => (
+            <div
+              key={category.category.id}
+              className="text-primary uppercase font-semibold text-sm"
+            >
+              {category.category.name}
+            </div>
+          ))}
+        </div>
+        <h1 className="mt-1 text-xl font-semibold hover:text-primary transition-colors duration-200">
+          {recipe.title}
+        </h1>
       </div>
-      <h1 className="text-xl font-semibold hover:text-primary transition-colors duration-200">
-        {recipe.title}
-      </h1>
       <p className="flex items-center gap-5">
         <span className="flex gap-1 items-center">
           <Clock size={16} />

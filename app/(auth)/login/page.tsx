@@ -8,7 +8,7 @@ export default function Login() {
   return (
     <div className="flex flex-col items-center">
       <h1 className="text-3xl font-bold text-primary mb-16">
-        Sign in to {constants.title}
+        Log in to {constants.title}
       </h1>
       <div className="min-w-[400px] max-w-[400px]">
         <LoginForm />

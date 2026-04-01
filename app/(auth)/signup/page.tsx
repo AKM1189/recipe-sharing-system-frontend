@@ -14,7 +14,7 @@ export default function Signup() {
         <p className="mt-3 text-center text-sm">
           Already have an account?{" "}
           <Link href={routes.auth.login} className="text-primary">
-            Sign in
+            Log in
           </Link>
         </p>
       </div>

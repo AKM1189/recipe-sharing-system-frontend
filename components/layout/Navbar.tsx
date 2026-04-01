@@ -1,23 +1,13 @@
 "use client";
 
-import * as React from "react";
 import Link from "next/link";
 import { LogIn, Menu } from "lucide-react";
-
 import {
   NavigationMenu,
-  NavigationMenuContent,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
-  NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
-import { useIsMobile } from "@/app/hooks/use-mobile";
-import { routes } from "@/lib/routes";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { useAuthStore } from "@/store/auth.store";
-import { Popover, PopoverTrigger } from "../ui/popover";
-import { PopoverContent } from "@radix-ui/react-popover";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -27,132 +17,137 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { useLogout } from "@/lib/queries/auth.queries";
-import { clearCookies, getCookie } from "@/lib/cookieHandler";
+import { getCookie } from "@/lib/cookieHandler";
 import { authConstants } from "@/lib/constants";
 import { NavbarDialog } from "./NavbarDialog";
+import { usePathname, useRouter } from "next/navigation";
+import { useIsMobile } from "@/app/hooks/use-mobile";
+import { routes } from "@/lib/routes";
+import ProfileAvatar from "../common/ProfileAvatar";
+import { useAuthStore } from "@/store/auth.store";
+import { cn } from "@/lib/utils";
+import { TbLogout } from "react-icons/tb";
+import Image from "next/image";
+import { useEffect, useState } from "react";
+
+export type MenuType = {
+  label: string;
+  href: string;
+};
+
+const menus = [
+  { label: "Home", href: routes.public.home },
+  { label: "Recipes", href: routes.public.recipes },
+  { label: "Add Recipe", href: routes.private.addRecipe },
+];
 
 export function Navbar() {
+  const [isNavOpen, setNavOpen] = useState(false);
+
   const isMobile = useIsMobile();
-  const [IsNavbarOpen, setIsNavbarOpen] = React.useState(false);
+  const pathname = usePathname();
+
+  useEffect(() => {
+    setNavOpen(false);
+  }, [pathname]);
 
   return (
     <div className="flex justify-between items-center h-20">
-      <NavigationMenu
-        viewport={isMobile}
-        className="flex justify-between items-center h-full"
-      >
-        <h2 className="text-2xl text-primary font-extrabold">Recipe</h2>
-        <NavigationMenuList className="flex-wrap ms-30 gap-8 max-lg:hidden ">
-          <NavigationMenuItem>
-            <NavigationMenuLink href={routes.public.home}>
-              Home
-            </NavigationMenuLink>
-          </NavigationMenuItem>
-          <NavigationMenuItem>
-            <NavigationMenuLink href={routes.public.recipes}>
-              Recipes
-            </NavigationMenuLink>
-          </NavigationMenuItem>
-          <NavigationMenuItem className="hidden md:block">
-            <NavigationMenuTrigger>Categories</NavigationMenuTrigger>
-            <NavigationMenuContent>
-              <ul className="grid w-[200px] gap-4">
-                <li>
-                  <NavigationMenuLink asChild>
-                    <Link href="#">Components</Link>
-                  </NavigationMenuLink>
-                  <NavigationMenuLink asChild>
-                    <Link href="#">Documentation</Link>
-                  </NavigationMenuLink>
-                  <NavigationMenuLink asChild>
-                    <Link href="#">Blocks</Link>
-                  </NavigationMenuLink>
-                </li>
-              </ul>
-            </NavigationMenuContent>
-          </NavigationMenuItem>
-          <NavigationMenuItem>
-            <NavigationMenuLink href={routes.private.addRecipe}>
-              Add Recipe
-            </NavigationMenuLink>
-          </NavigationMenuItem>
-        </NavigationMenuList>
-      </NavigationMenu>
-      <div className="flex gap-8 items-center">
-        <div className="lg:hidden">
-          <NavbarDialog />
+      <div className="flex items-center gap-2">
+        <Image alt="Recipixa" width={40} height={40} src={"/recipe_logo.png"} />
+        <h2 className="text-2xl text-primary font-extrabold">Recipixa</h2>
+      </div>
+
+      <div className="flex items-center gap-10">
+        <NavigationMenu
+          viewport={isMobile}
+          className="flex justify-between items-center h-full"
+        >
+          <NavigationMenuList className="flex-wrap ms-30 gap-8 max-lg:hidden">
+            {menus.map((menu) => (
+              <NavigationMenuItem key={menu.href}>
+                <NavigationMenuLink
+                  href={menu.href}
+                  className={cn(
+                    pathname === menu.href
+                      ? "text-primary hover:text-primary focus:text-primary"
+                      : "text-default hover:text-muted-foreground",
+                  )}
+                >
+                  {menu.label}
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+            ))}
+          </NavigationMenuList>
+        </NavigationMenu>
+
+        <div className="flex gap-8 items-center">
+          <div className="lg:hidden">
+            <NavbarDialog menus={menus} />
+          </div>
+          <Profile pathname={pathname} />
         </div>
-        <Profile />
       </div>
     </div>
   );
 }
 
-function ListItem({
-  title,
-  children,
-  href,
-  ...props
-}: React.ComponentPropsWithoutRef<"li"> & { href: string }) {
-  return (
-    <li {...props}>
-      <NavigationMenuLink asChild>
-        <Link href={href}>
-          <div className="text-sm leading-none font-medium">{title}</div>
-          <p className="text-muted-foreground line-clamp-2 text-sm leading-snug">
-            {children}
-          </p>
-        </Link>
-      </NavigationMenuLink>
-    </li>
-  );
-}
-
-function Profile() {
+function Profile({ pathname }: { pathname: string }) {
   const { user } = useAuthStore();
   const { mutate } = useLogout();
+  const router = useRouter();
 
   const handleLogout = () => {
     const deviceId = getCookie(authConstants.deviceId);
-    console.log("deviceId", deviceId);
-    if (deviceId) {
-      mutate({ deviceId });
-    }
+    if (deviceId) mutate({ deviceId });
   };
 
-  if (user)
+  if (!user) {
     return (
-      <DropdownMenu>
-        <DropdownMenuTrigger className="flex items-center gap-3">
-          <Avatar>
-            <AvatarImage src="https://github.com/shadcn.png" />
-            <AvatarFallback>CN</AvatarFallback>
-          </Avatar>
-          <span>{user.name}</span>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-50" align="end">
-          <DropdownMenuLabel>My Account</DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem>Profile</DropdownMenuItem>
-          <DropdownMenuItem>My Recipes</DropdownMenuItem>
-          <DropdownMenuItem>Saved</DropdownMenuItem>
-          <DropdownMenuItem
-            className="text-destructive hover:text-destructive!"
-            onClick={handleLogout}
-          >
-            Logout
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+      <Link
+        href={routes.auth.login}
+        className="flex items-center gap-2 text-base font-medium"
+      >
+        <LogIn color="#000000" className="w-5 h-5" />
+        Login
+      </Link>
     );
+  }
+
+  const dropdownItems = [
+    { label: "Profile", href: routes.private.profile },
+    { label: "My Recipes", href: routes.private.myRecipe },
+    { label: "Favourites", href: routes.private.favourites },
+  ];
 
   return (
-    <a
-      href={routes.auth.login}
-      className="flex items-center gap-2 text-base font-medium"
-    >
-      <LogIn color="#000000" className="w-5 h-5" />
-      Login
-    </a>
+    <DropdownMenu>
+      <DropdownMenuTrigger className="flex items-center gap-2">
+        <ProfileAvatar profileUrl={user.profileUrl} />
+        <span className="w-32 truncate">{user.name}</span>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="w-50" align="end">
+        <DropdownMenuLabel>My Account</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        {dropdownItems.map((item) => (
+          <DropdownMenuItem
+            key={item.href}
+            className={cn(
+              pathname === item.href ? "text-primary" : "",
+              "hover:text-primary",
+            )}
+            onClick={() => router.push(item.href)}
+          >
+            {item.label}
+          </DropdownMenuItem>
+        ))}
+        <DropdownMenuItem
+          // className="text-destructive hover:text-destructive!"
+          onClick={handleLogout}
+        >
+          <TbLogout size={25} /> Logout
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }

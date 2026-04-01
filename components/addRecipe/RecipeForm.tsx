@@ -7,7 +7,7 @@ import { Field, FieldError, FieldGroup, FieldLabel } from "../ui/field";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
 import { useEffect, useState } from "react";
-import { getImageUrl, handlePreviewImage } from "@/lib/utils";
+import { handlePreviewImage } from "@/lib/utils";
 import { SelectInput } from "../common/SelectInput";
 import { RecipeDifficulty } from "@/lib/constants";
 import { MultiSelectCreatable } from "../common/ComobBoxCreatable";
@@ -22,6 +22,7 @@ import { useAddRecipe, useUpdateRecipe } from "@/lib/queries/recipe.queries";
 import { Category, Recipe } from "@/types";
 import { useRecipeStore } from "@/store/recipe.store";
 import { useGetCategories } from "@/lib/queries/category.queries";
+import Image from "../common/Image";
 
 const createDefaultValues = {
   title: "",
@@ -71,6 +72,7 @@ export function RecipeForm({ recipe }: { recipe?: Recipe }) {
           steps: recipe.steps.map((step) => ({
             stepId: step.id,
             stepNumber: step.stepNumber,
+            title: step.title,
             instruction: step.instruction,
             imageUrl: step.imageUrl || undefined,
           })),
@@ -102,7 +104,6 @@ export function RecipeForm({ recipe }: { recipe?: Recipe }) {
 
   function onSubmit(data: z.infer<typeof recipeSchema>) {
     // Do something with the form values.
-    console.log("submitting", data);
     if (!isUpdate) {
       mutate(
         { ...data, status: "PUBLISHED" },
@@ -144,7 +145,7 @@ export function RecipeForm({ recipe }: { recipe?: Recipe }) {
   return (
     <div>
       <form
-        id="form-rhf-demo"
+        id="recipe-form"
         onSubmit={form.handleSubmit(onSubmit)}
         className="flex flex-col gap-5"
       >
@@ -225,10 +226,10 @@ export function RecipeForm({ recipe }: { recipe?: Recipe }) {
         <ImagePreview src={recipeImageUrl} alt="recipe-image" />
 
         {!recipeImageUrl && recipe?.imageUrl && (
-          <img
+          <Image
             width={200}
             height={200}
-            src={getImageUrl(recipe.imageUrl)}
+            publicId={recipe.imageUrl}
             alt={recipe.title}
           />
         )}
@@ -314,8 +315,8 @@ export function RecipeForm({ recipe }: { recipe?: Recipe }) {
           </button>
           <button
             type="submit"
-            onClick={() => console.log(form.formState.errors)}
             className="w-[150px] mt-4 px-4 py-2 bg-primary text-white rounded"
+            form="recipe-form"
           >
             Submit
           </button>

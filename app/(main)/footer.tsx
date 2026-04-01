@@ -23,7 +23,7 @@ export default function Footer() {
             </div>
           ))}
         </div>
-        <div className="flex gap-5 fond-medium">
+        <div className="flex gap-5 max-sm:text-sm">
           <Link href={routes.public.home}>Home</Link>
           <Link href={routes.public.recipes}>All Recipes</Link>
           <Link href={routes.public.recipes}>Terms & Conditions</Link>
@@ -31,14 +31,14 @@ export default function Footer() {
         </div>
       </div>
       <div className="mt-8 text-center">
-        <p className="text-muted-foreground mx-3">
+        <p className="text-muted-foreground mx-3 max-sm:text-sm">
           Platea offers a world of delicious recipes, cooking inspiration, and
           culinary tips. Explore new flavors, master techniques, and bring your
           passion for cooking to life.
         </p>
 
-        <p className="mt-8 text-sm">
-          © 2025 {constants.title}. All rights reserved. Developed by AKM
+        <p className="mt-8 text-sm text-muted-foreground">
+          © 2026 {constants.title}. All rights reserved. Developed by AKM
         </p>
       </div>
     </div>

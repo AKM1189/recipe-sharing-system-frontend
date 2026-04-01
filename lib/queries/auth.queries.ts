@@ -6,8 +6,8 @@ import { clearCookies, getCookie } from "../cookieHandler";
 export const useLogin = () => {
   return useMutation({
     mutationFn: login,
-    onSuccess: (data) => {
-      console.log("Login Successful", data);
+    onError: (error: any) => {
+      errorToast(error, "Invalid Credentials");
     },
   });
 };
@@ -16,7 +16,6 @@ export const useSignup = () => {
   return useMutation({
     mutationFn: signup,
     onError: (error: any) => {
-      console.log(error);
       errorToast(error, "Signup Failed");
     },
   });
@@ -40,6 +39,7 @@ export const useLogout = () => {
       successToast(data, "Logout Successful!");
       clearCookies();
       queryClient.invalidateQueries({ queryKey: ["me"] });
+      window.location.reload();
     },
     onError: (error: any) => {
       console.log(error);

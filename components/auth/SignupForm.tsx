@@ -9,43 +9,13 @@ import { useSignup } from "@/lib/queries/auth.queries";
 import { successToast } from "@/lib/handleToast";
 import { routes } from "@/lib/routes";
 import { useRouter } from "next/navigation";
-
-const passwordSchema = z
-  .string()
-  .nonempty({ message: "Password is required" })
-  .min(8, "Password must be at least 8 characters long.")
-  .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
-  .regex(/[a-z]/, "Password must contain at least one lowercase letter")
-  .regex(/[0-9]/, "Password must contain at least one number");
-
-const formSchema = z
-  .object({
-    name: z
-      .string()
-      .nonempty({ message: "Name is required" })
-      .min(3, { message: "At lease 3 characters required" }),
-    email: z
-      .string()
-      .nonempty({ message: "Email is required" })
-      .email({ message: "Invalid Email" }),
-    password: passwordSchema,
-    confirmPassword: z.string().min(8, "Confirm password must match password."),
-  })
-  .superRefine((data, ctx) => {
-    if (data.password !== data.confirmPassword) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Passwords do not match",
-        path: ["confirmPassword"], // Point error to confirmPassword field
-      });
-    }
-  });
+import { signupSchema } from "@/schemas/authSchema";
 
 export function SignupForm() {
   const router = useRouter();
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof signupSchema>>({
+    resolver: zodResolver(signupSchema),
     defaultValues: {
       name: "",
       email: "",
@@ -56,7 +26,7 @@ export function SignupForm() {
 
   const { mutate } = useSignup();
 
-  function onSubmit(data: z.infer<typeof formSchema>) {
+  function onSubmit(data: z.infer<typeof signupSchema>) {
     const { confirmPassword, ...body } = data;
     mutate(body, {
       onSuccess: (data) => {
@@ -67,7 +37,7 @@ export function SignupForm() {
   }
 
   return (
-    <form id="form-rhf-demo" onSubmit={form.handleSubmit(onSubmit)}>
+    <form id="signup-form" onSubmit={form.handleSubmit(onSubmit)}>
       <FieldGroup>
         <Controller
           name="name"
@@ -140,7 +110,7 @@ export function SignupForm() {
             </Field>
           )}
         />
-        <Button type="submit" form="form-rhf-demo">
+        <Button type="submit" form="signup-form">
           Sign up
         </Button>
       </FieldGroup>
