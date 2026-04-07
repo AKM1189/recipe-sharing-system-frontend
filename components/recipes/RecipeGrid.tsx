@@ -5,10 +5,7 @@ import RecipeCard from "./RecipeCard";
 const RecipesGrid = ({ recipes }: { recipes: Recipe[] }) => {
   console.log("recipes", recipes);
   return (
-    <div
-      // className="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-6"
-      className="flex flex-wrap gap-x-6 gap-y-12 max-sm:justify-center"
-    >
+    <div className="grid gap-x-6 gap-y-12 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
       {recipes.map((recipe) => (
         <RecipeCard key={recipe.id} recipe={recipe} />
       ))}

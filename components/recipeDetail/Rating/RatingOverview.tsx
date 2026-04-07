@@ -14,6 +14,10 @@ const RatingOverview = ({ recipeId }: { recipeId: number }) => {
     }
   }, [data]);
 
+  const formatRating = (rating: string) => {
+    return parseInt(rating) > 0 ? parseFloat(rating).toFixed(1) : rating;
+  };
+
   if (recipe)
     return (
       <div>
@@ -27,9 +31,7 @@ const RatingOverview = ({ recipeId }: { recipeId: number }) => {
             <div>
               <p className="mb-2 font-bold">
                 <span className="text-5xl text-gray-800">
-                  {parseInt(recipe.rating) > 0
-                    ? parseFloat(recipe.rating).toFixed(1)
-                    : recipe.rating}
+                  {formatRating(recipe.rating) ?? 0}
                 </span>
                 / 5
               </p>

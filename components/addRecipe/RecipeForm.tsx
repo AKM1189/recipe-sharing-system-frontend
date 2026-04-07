@@ -23,6 +23,7 @@ import { Category, Recipe } from "@/types";
 import { useRecipeStore } from "@/store/recipe.store";
 import { useGetCategories } from "@/lib/queries/category.queries";
 import Image from "../common/Image";
+import { useLoadingStore } from "@/store/loading.store";
 
 const createDefaultValues = {
   title: "",
@@ -54,7 +55,9 @@ export function RecipeForm({ recipe }: { recipe?: Recipe }) {
   const [categories, setCategories] = useState<string[]>([]);
 
   const { mutate } = useAddRecipe();
-  const { mutate: updateRecipe } = useUpdateRecipe();
+  const { mutate: updateRecipe, isPending } = useUpdateRecipe();
+
+  const { setLoading } = useLoadingStore();
 
   const defaultValues =
     recipe && isUpdate
@@ -101,6 +104,10 @@ export function RecipeForm({ recipe }: { recipe?: Recipe }) {
       );
     }
   }, [categoryData]);
+
+  useEffect(() => {
+    setLoading(isPending);
+  }, [isPending]);
 
   function onSubmit(data: z.infer<typeof recipeSchema>) {
     // Do something with the form values.

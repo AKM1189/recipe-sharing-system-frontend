@@ -7,22 +7,26 @@ import { useGetRecipes } from "@/lib/queries/recipe.queries";
 import { useEffect, useState } from "react";
 import CustomPagination from "../common/CustomPagination";
 import { Spinner } from "../ui/spinner";
+import Link from "next/link";
+import { routes } from "@/lib/routes";
 
 const RecipesSection = ({
   title,
   description,
   searchQuery = "",
+  homePage = false,
 }: {
   title: string;
   description: string;
   searchQuery?: string;
+  homePage?: boolean;
 }) => {
   const [recipesData, setRecipesData] = useState<Recipe[]>([]);
 
   const { pagination, setPagination } = usePaginationStore();
   const { data, refetch, isFetching } = useGetRecipes(searchQuery, {
     page: pagination.current,
-    limit: 9,
+    limit: homePage ? 8 : 12,
   });
 
   useEffect(() => {
@@ -52,15 +56,32 @@ const RecipesSection = ({
           {description}
         </p>
       )}
-      <div className="relative min-w-0 w-full mt-5">
-        {isFetching && (
-          <div className="z-100 absolute top-0 left-0 bg-white/50  w-full h-full flex justify-center items-center">
-            <Spinner className="size-12" />
+      {!isFetching && recipesData.length == 0 ? (
+        <NoDataFound data={recipesData} message="No Recipe Found!" />
+      ) : (
+        <>
+          <div className="relative min-w-0 w-full mt-5">
+            {isFetching && (
+              <div className="z-100 absolute top-0 left-0 bg-white/50  w-full h-full flex justify-center items-center">
+                <Spinner className="size-12" />
+              </div>
+            )}
+            {Array.isArray(recipesData) && (
+              <RecipesGrid recipes={recipesData} />
+            )}
           </div>
-        )}
-        {Array.isArray(recipesData) && <RecipesGrid recipes={recipesData} />}
-      </div>
-      {recipesData && <CustomPagination />}
+          {homePage ? (
+            <Link
+              href={routes.public.recipes}
+              className="mt-16 text-muted-foreground hover:text-primary"
+            >
+              Browse more recipes <span className="">{">>"}</span>
+            </Link>
+          ) : (
+            <>{recipesData.length > 0 && <CustomPagination />}</>
+          )}
+        </>
+      )}
     </div>
   );
 };

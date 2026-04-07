@@ -124,7 +124,7 @@ function Profile({ pathname }: { pathname: string }) {
     <DropdownMenu>
       <DropdownMenuTrigger className="flex items-center gap-2">
         <ProfileAvatar profileUrl={user.profileUrl} />
-        <span className="w-32 truncate">{user.name}</span>
+        <span className="max-w-32 truncate text-start">{user.name}</span>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-50" align="end">
         <DropdownMenuLabel>My Account</DropdownMenuLabel>

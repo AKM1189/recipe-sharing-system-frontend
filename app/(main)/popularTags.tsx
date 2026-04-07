@@ -47,7 +47,6 @@ export default async function PopularTags() {
           </p>
         </div>
         <Categories categories={categories} isFooter={true} />
-        <NoDataFound data={categories.data} message="No Tags Found!" />
       </div>
     </div>
   );

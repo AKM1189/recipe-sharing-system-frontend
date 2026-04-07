@@ -7,7 +7,7 @@ export const useLogin = () => {
   return useMutation({
     mutationFn: login,
     onError: (error: any) => {
-      errorToast(error, "Invalid Credentials");
+      errorToast(error, "Login Failed!");
     },
   });
 };

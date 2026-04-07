@@ -2,6 +2,7 @@ import { Category } from "@/types";
 import { Badge } from "../ui/badge";
 import Link from "next/link";
 import { twMerge } from "tailwind-merge";
+import NoDataFound from "../common/NoDataFound";
 
 interface Categories {
   data: Category[] | null;
@@ -17,6 +18,7 @@ const Categories = ({
 }) => {
   return (
     <div className="mt-16 flex flex-wrap justify-center gap-x-2 gap-y-4 max-w-[1000px]">
+      <NoDataFound data={categories?.data} message="No Tags Found!" />
       {Array.isArray(categories?.data) &&
         categories?.data.map((category, index) => (
           <Link href={`/recipes/categories/${category.name}`} key={index}>
