@@ -1,16 +1,15 @@
 import { CreateRecipeBody, UpdateRecipeBody } from "@/types";
 import { endpoints } from "../endpoints";
 import { api } from "./apiConfig";
+import { fetchWithTimeout } from "../utils";
 
 export const getRecipes = async (
   query: string = "",
   pagination?: { page: number; limit: number },
 ) => {
-  const response = await api.get(endpoints.recipe, {
-    params: {
-      query,
-      ...pagination,
-    },
+  const response = await fetchWithTimeout(endpoints.recipe, 5000, {
+    query,
+    ...pagination,
   });
   return response.data;
 };

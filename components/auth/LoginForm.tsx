@@ -13,6 +13,8 @@ import { setCookie } from "@/lib/cookieHandler";
 import { authConstants } from "@/lib/constants";
 import { useAuthStore } from "@/store/auth.store";
 import { loginSchema } from "@/schemas/authSchema";
+import { useLoadingStore } from "@/store/loading.store";
+import { useEffect } from "react";
 
 export function LoginForm() {
   const router = useRouter();
@@ -26,7 +28,12 @@ export function LoginForm() {
     },
   });
 
-  const { mutate } = useLogin();
+  const { mutate, isPending } = useLogin();
+  const { setLoading } = useLoadingStore();
+
+  useEffect(() => {
+    setLoading(isPending);
+  }, [isPending]);
 
   function onSubmit(data: z.infer<typeof loginSchema>) {
     mutate(data, {

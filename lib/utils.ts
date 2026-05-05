@@ -1,6 +1,7 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { routes } from "./routes";
+import { api } from "./api/apiConfig";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -41,4 +42,27 @@ export const formatLowerCaseName = (text: string) => {
   if (arr.length > 0) {
     return arr.map((item) => `${item[0].toUpperCase()}${item.slice(1)} `);
   } else text[0].toUpperCase() + text.slice(1);
+};
+
+export const fetchWithTimeout = async (
+  url: string,
+  timeout = 5000,
+  params?: any,
+) => {
+  const controller = new AbortController();
+
+  const id = setTimeout(() => {
+    controller.abort();
+  }, timeout);
+
+  try {
+    const res = await api.get(url, {
+      signal: controller.signal,
+      params: params,
+    });
+
+    return res;
+  } finally {
+    clearTimeout(id);
+  }
 };
